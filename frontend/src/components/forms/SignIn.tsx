@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole } from "../index";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { loginUser } from "../../store/authSlice/authThunk";
@@ -8,6 +8,7 @@ import loginValidation from "../../validations/loginValidation";
 
 
 const SignIn = () => {
+    const navigate = useNavigate();
     const [openPass, setOpenPass] = useState(false);
     const dispatch = useAppDispatch();
     const { loading, error } = useAppSelector((state) => state.auth);
@@ -15,16 +16,19 @@ const SignIn = () => {
     const handleSubmit = (values: { email: string; password: string }, { resetForm }: { resetForm: () => void }) => {
         dispatch(loginUser(values))
             .unwrap()
-            .then(() => resetForm())
+            .then(() => {
+                resetForm();
+                navigate("/my-profile", { replace: true });
+            })
             .catch((err: any) => console.log("Login error:", err));
     };
 
     return (
         <div className="px-5 pt-20">
             <Formik
-                initialValues={{ 
-                    email: "", 
-                    password: "" 
+                initialValues={{
+                    email: "",
+                    password: ""
                 }}
                 onSubmit={handleSubmit}
                 validationSchema={loginValidation}

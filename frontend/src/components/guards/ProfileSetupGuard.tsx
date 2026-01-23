@@ -4,8 +4,9 @@ import type { JSX } from "react";
 
 
 const ProfileSetupGuard = ({ children }: { children: JSX.Element }) => {
-    const user = useAppSelector((state) => state.auth.user);
+    const { user, initialized } = useAppSelector(state => state.auth);
 
+    if (!initialized) return null;
     if (!user) return <Navigate to="/sign-in" />;
     if (user.profileCompleted) return <Navigate to="/my-profile" />;
 

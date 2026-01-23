@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { AuthState } from "../../types";
 import { loginUser, registerUser } from "./authThunk";
-import { updateProfile } from "../profileSlice/profileThunk";
+import { updateProfile, loadUserFromToken } from "../profileSlice/profileThunk";
 
 const initialState: AuthState = {
     user: null,
     token: null,
     loading: false,
     error: null,
+    initialized: false
 };
 
 const authSlice = createSlice({
@@ -24,6 +25,14 @@ const authSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
+        setUserFromStorage: (state) => {
+            const token = localStorage.getItem("token");
+            const user = localStorage.getItem("user");
+            if (token && user) {
+                state.token = token;
+                state.user = JSON.parse(user);
+            }
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -57,14 +66,30 @@ const authSlice = createSlice({
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload?.message || "Something went wrong";
-            });
+            })
 
-        // Profile
-        builder.addCase(updateProfile.fulfilled, (state, action) => {
-            state.user = action.payload.user;
-        });
+            // Profile
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.user = action.payload.user;
+            })
+
+            .addCase(loadUserFromToken.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loadUserFromToken.fulfilled, (state, action) => {
+                state.user = action.payload.user;
+                state.token = action.payload.token;
+                state.loading = false;
+                state.initialized = true;
+            })
+            .addCase(loadUserFromToken.rejected, (state) => {
+                state.user = null;
+                state.token = null;
+                state.loading = false;
+                state.initialized = true;
+            });
     },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setUserFromStorage } = authSlice.actions;
 export default authSlice.reducer;

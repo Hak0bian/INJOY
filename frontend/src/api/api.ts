@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { IRegisterPayload, IAuthResponse, ILoginPayload } from "../types";
+import type { IRegisterPayload, IAuthResponse, ILoginPayload, IUser } from "../types";
 
 const API_URL = "http://localhost:5000/api/auth";
 const instance = axios.create({
@@ -26,4 +26,8 @@ export const API = {
     updateProfile(data: FormData) {
         return instance.post("/profile", data).then(res => res.data);
     },
+
+    getMe(): Promise<{ user: IUser }> {
+    return instance.get("/me").then(res => res.data);
+}
 };

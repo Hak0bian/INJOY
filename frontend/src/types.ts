@@ -1,8 +1,15 @@
+interface IProfile {
+    username: string,
+    photo?: string,
+    bio?: string,
+}
+
 export interface IUser {
     id: string;
     email: string;
-    username: string;
+    fullname: string;
     profileCompleted: boolean;
+    profile: IProfile
 }
 
 export interface IAuthResponse {
@@ -30,4 +37,5 @@ export interface AuthState {
     token: string | null;
     loading: boolean;
     error: string | null;
+    initialized: boolean;
 }

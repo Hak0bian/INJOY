@@ -24,4 +24,3 @@ export const loginUser = createAsyncThunk<IAuthResponse, ILoginPayload, { reject
         }
     }
 );
-

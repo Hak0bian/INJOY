@@ -4,6 +4,7 @@ import { updateProfile } from "./profileThunk";
 const initialState = {
     loading: false,
     error: null,
+    initialized: false
 }
 
 const profileSlice = createSlice({

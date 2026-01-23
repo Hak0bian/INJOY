@@ -15,8 +15,12 @@ router.post("/register", async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = new User({ username, email, password: hashedPassword });
+        
+        const newUser = new User({
+            fullname: username, 
+            email,
+            password: hashedPassword,
+        });
         await newUser.save();
 
         const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -25,8 +29,9 @@ router.post("/register", async (req, res) => {
             token,
             user: {
                 id: newUser._id,
-                username: newUser.username,
+                fullname: newUser.fullname,
                 email: newUser.email,
+                profile: newUser.profile,
                 profileCompleted: newUser.profileCompleted,
             },
         });
@@ -51,7 +56,20 @@ router.post("/login", async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        res.status(200).json({ token, user: { id: user._id, username: user.username, email } });
+        res.status(200).json({
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                fullname: user.username,
+                profile: {
+                    username: user.profile.displayName,
+                    bio: user.profile.bio,
+                    photo: user.profile.photo
+                },
+                profileCompleted: user.profileCompleted,
+            },
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server error" });

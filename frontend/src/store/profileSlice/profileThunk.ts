@@ -13,3 +13,19 @@ export const updateProfile = createAsyncThunk(
         }
     }
 );
+
+
+export const loadUserFromToken = createAsyncThunk(
+    "auth/loadUserFromToken",
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return rejectWithValue("No token found");
+
+            const response = await API.getMe();
+            return { user: response.user, token };
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || err.message);
+        }
+    }
+);

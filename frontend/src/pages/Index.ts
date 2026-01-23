@@ -1,10 +1,13 @@
 import SignInPage from "./Auth/SignInPage";
 import SignUpPage from "./Auth/SignUpPage";
 import ForgotPassPage from "./Auth/ForgotPassPage";
-import ProfileSetupPage from "./ProfileSetupPage";
-import ProfilePage from "./ProfilePage";
-import UserProfilePage from "./UserProfilePage";
+import ProfileSetupPage from "./profile/ProfileSetupPage";
+import ProfilePage from "./profile/ProfilePage";
+import UserProfilePage from "./profile/UserProfilePage";
 import FollowersPage from "./FollowersPage";
 import HomePage from "./HomePage";
+import EditProfilePage from "./profile/EditProfilePage";
 
-export { SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage }
+export { SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
+    EditProfilePage, 
+ }

@@ -1,11 +1,21 @@
 import { Route, Routes } from "react-router-dom"
-import { HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage } from "./pages/Index"
-import Layout from "./components/Layout"
-import ProfileSetupGuard from "./components/guards/ProfileSetupGuard"
-import ProfileGuard from "./components/guards/ProfileGuard"
+import { useEffect } from "react"
+import { HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage,
+    EditProfilePage
+} from "./pages/Index"
+import { Layout, ProfileGuard, ProfileSetupGuard } from "./components/index"
+import { useAppDispatch } from "./store/hooks"
+import { loadUserFromToken } from "./store/profileSlice/profileThunk"
 
 
 const App = () => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(loadUserFromToken());
+  }, [dispatch]);
+
+
   return (
     <section className="min-h-screen bg-main text-maintext pb-20">
       <Routes>
@@ -30,6 +40,7 @@ const App = () => {
               </ProfileGuard>
             }
           />
+          <Route path="/edit-profile" element={<EditProfilePage />} />
           <Route path="/user-profile" element={<UserProfilePage />} />
           <Route path="/followers" element={<FollowersPage />} />
         </Route>
