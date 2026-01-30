@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
-import profile from "../assets/images/profile.jpg";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import profile from "../../assets/images/profile.jpg";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
-import { updateProfile } from "../store/profileSlice/profileThunk";
+import { updateProfile } from "../../store/profileSlice/profileThunk";
 
 
 const ProfileSetup = () => {

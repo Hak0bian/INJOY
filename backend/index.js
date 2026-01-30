@@ -4,8 +4,10 @@ import cors from "cors";
 import authRoutes from "./routes/auth.js";
 import profileRoutes from "./routes/profile.js";
 import connectDB from "./config/db.js";
+import postRoutes from "./routes/posts.js";
 import path from "path";
 import { fileURLToPath } from "url";
+
 
 dotenv.config();
 const app = express();
@@ -17,13 +19,14 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
     cors({
         origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         credentials: true,
     })
 );
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", profileRoutes);
+app.use("/api/posts", postRoutes);
 connectDB();
 
 const PORT = process.env.PORT || 5000;

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Formik, Form, Field } from "formik";
-import profile from "../../assets/images/profile.jpg";
-
 import { updateProfile } from "../../store/profileSlice/profileThunk";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
+import profile from "../../assets/images/profile.jpg";
+
 
 const EditProfile = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate()
     const { user } = useAppSelector((state) => state.auth);
     const [profilePic, setProfilePic] = useState<File | null>(null);
 
@@ -16,15 +18,20 @@ const EditProfile = () => {
         }
     };
 
-    const handleSubmit = (values: {fullname: string; username: string; bio: string}) => {
+    const handleSubmit = (values: { fullname: string; username: string; bio: string }) => {
         const formData = new FormData();
-
         formData.append("fullname", values.fullname);
         formData.append("username", values.username);
         formData.append("bio", values.bio);
         if (profilePic) formData.append("photo", profilePic);
-
-        dispatch(updateProfile(formData));
+        dispatch(updateProfile(formData))
+            .unwrap()
+            .then(() => {
+                navigate("/my-profile", { replace: true });
+            })
+            .catch((err) => {
+                console.error("Profile update failed:", err);
+            });
     };
 
     return (

@@ -1,24 +1,31 @@
 import { NavLink } from 'react-router-dom'
-import profile from '../../assets/images/profile.jpg'
-import { useAppSelector } from '../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { IoSettingsOutline } from "react-icons/io5";
-import { useState } from 'react';
-import SettingsModal from './SettingsModal';
+import { useEffect, useState } from 'react';
+import { getUserPosts } from '../../store/postSlice/postThunk';
+import { useNavigate } from "react-router-dom";
+import Settings from './Settings';
+import profile from '../../assets/images/profile.jpg'
 
-import post1 from '../../assets/images/post1.jpg'
-import post2 from '../../assets/images/post2.jpg'
-import post3 from '../../assets/images/post3.jpg'
-import post4 from '../../assets/images/post4.jpg'
 
 const MyProfile = () => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate()
     const { user } = useAppSelector((state) => state.auth);
+    const { posts } = useAppSelector((state) => state.posts);
     const [openSettings, setOpenSettings] = useState(false)
+
+    useEffect(() => {
+        if (user?.id) {
+            dispatch(getUserPosts(user.id));
+        }
+    }, [user, dispatch]);
 
     return (
         <div className='pt-5 pb-30 px-5'>
             <div className='text-right'>
                 <button onClick={() => setOpenSettings(true)} className='cursor-pointer'>
-                    <IoSettingsOutline className='w-5 h-5'/>
+                    <IoSettingsOutline className='w-5 h-5' />
                 </button>
             </div>
 
@@ -53,17 +60,19 @@ const MyProfile = () => {
 
             {/* Posts */}
             <div className="grid grid-cols-3 gap-1">
-                {[post1, post2, post3, post4].map((post, i) => (
-                    <div key={i} className="aspect-4/5 w-full overflow-hidden bg-black">
-                        <img src={post} className="w-full h-full object-cover" />
+                {posts.map((post) => (
+                    <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                        {post.image && 
+                        <img 
+                            src={`http://localhost:5000/${post.image}`} 
+                            className="w-full h-full object-cover" 
+                            onClick={() => navigate(`/posts/${post._id}`)}
+                        />}
                     </div>
                 ))}
             </div>
 
-            <SettingsModal
-                open={openSettings}
-                onClose={() => setOpenSettings(false)}
-            />
+            <Settings open={openSettings} onClose={() => setOpenSettings(false)} />
         </div>
     )
 }

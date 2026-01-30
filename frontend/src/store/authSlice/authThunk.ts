@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../api/api";
 import type { IAuthError, IAuthResponse, ILoginPayload, IRegisterPayload } from "../../types";
 
-// REGISTER
+
 export const registerUser = createAsyncThunk<IAuthResponse, IRegisterPayload, { rejectValue: IAuthError }>(
     "auth/registerUser", async (payload, { rejectWithValue }) => {
         try {
@@ -13,7 +13,6 @@ export const registerUser = createAsyncThunk<IAuthResponse, IRegisterPayload, { 
     }
 );
 
-// LOGIN
 export const loginUser = createAsyncThunk<IAuthResponse, ILoginPayload, { rejectValue: IAuthError }>(
     "auth/loginUser",
     async (payload, { rejectWithValue }) => {

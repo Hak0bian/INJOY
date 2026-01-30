@@ -1,44 +1,118 @@
-import post from '../../assets/images/post2.jpg'
-import profile from '../../assets/images/profile.jpg'
-import { FaRegHeart } from "react-icons/fa";
-import { FaRegComment } from "react-icons/fa";
-import { FiSend } from "react-icons/fi";
-import { NavLink } from 'react-router-dom';
+import { useState } from "react";
+import { FaRegHeart, FaRegComment, FaRegBookmark } from "react-icons/fa";
+import { IoEllipsisVertical } from "react-icons/io5";
+import { NavLink } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import type { IPostProps } from "../../types";
+import { updatePostText, deletePost } from "../../store/postSlice/postThunk";
 
+const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) => {
+    const dispatch = useAppDispatch();
+    const authUser = useAppSelector((state) => state.auth.user);
+    const isOwnPost = authUser?.id === userId;
+    const [openOptions, setOpenOptions] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedText, setEditedText] = useState(text || "");
 
-const Post = () => {
+    const handleSaveText = () => {
+        dispatch(updatePostText({ postId: id, text: editedText }))
+            .unwrap()
+            .then(() => setIsEditing(false))
+            .catch((err) => console.error("Update failed", err));
+    };
+
+    const handleDelete = () => {
+        dispatch(deletePost(id));
+    };
+
     return (
-        <div className='my-10'>
-            <div className="relative aspect-4/5 w-full overflow-hidden rounded-xl">
-                <img src={post} className="block w-full h-full object-cover" />
-
-                <NavLink to="">
-                    <div className="absolute top-2 left-2 flex items-center gap-2 text-[14px]">
-                        <img src={profile} className="w-8 h-8 rounded-full" />
-                        <p className="font-semibold text-white">username__</p>
+        <div className="my-10">
+            <div className="flex items-center justify-between mb-2">
+                <NavLink to={`/user-posts/${id}`}>
+                    <div className="flex items-center gap-2 text-[14px]">
+                        <img
+                            src={
+                                user.profile?.photo
+                                    ? `http://localhost:5000/${user.profile.photo.replace("\\", "/")}`
+                                    : "/default-profile.jpg"
+                            }
+                            alt={user.fullname}
+                            className="w-8 h-8 rounded-full"
+                        />
+                        <p className="font-semibold text-white">
+                            {user.profile?.username || user.fullname}
+                        </p>
                     </div>
                 </NavLink>
+
+                {isOwnPost && (
+                    <button
+                        onClick={() => setOpenOptions(!openOptions)}
+                        className="text-[20px] cursor-pointer mt-1"
+                    >
+                        <IoEllipsisVertical />
+                    </button>
+                )}
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl aspect-4/5">
+                {image && (
+                    <img
+                        src={`http://localhost:5000/${image.replace("\\", "/")}`}
+                        className="w-full h-full object-cover"
+                    />
+                )}
 
                 <div className="absolute bottom-2 left-2 flex gap-4 bg-secondary px-5 py-2 rounded-xl">
                     <div className="flex gap-1 items-center">
                         <FaRegHeart />
-                        <p>456</p>
+                        <p>{likes}</p>
                     </div>
-
                     <div className="flex gap-1 items-center">
                         <FaRegComment />
-                        <p>45</p>
+                        <p>{comments}</p>
                     </div>
-
                     <button>
-                        <FiSend />
+                        <FaRegBookmark />
                     </button>
                 </div>
+
+                {openOptions && (
+                    <div className="absolute top-0 right-0 flex flex-col items-baseline gap-2 bg-secondary py-5 pl-3 pr-6 text-[14px]">
+                        <button
+                            onClick={() => {
+                                setIsEditing(true);
+                                setOpenOptions(false);
+                            }}
+                            className="cursor-pointer"
+                        >
+                            Edit Text
+                        </button>
+                        <button
+                            onClick={handleDelete}
+                            className="text-red-500 cursor-pointer"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                )}
             </div>
-            <p className='text-[12px] pt-1'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde, repudiandae?</p>
+
+            {isEditing ? (
+                <div className="flex gap-1 pt-2">
+                    <input
+                        type="text"
+                        value={editedText}
+                        onChange={(e) => setEditedText(e.target.value)}
+                        className="w-full outline-0 text-[14px] border-b border-gray-500"
+                    />
+                    <button onClick={handleSaveText} className="text-green-500 text-[16px] cursor-pointer">✔</button>
+                </div>
+            ) : (
+                text && <p className="text-[14px] pt-2 px-1">{text}</p>
+            )}
         </div>
     );
 };
 
-
-export default Post
+export default Post;

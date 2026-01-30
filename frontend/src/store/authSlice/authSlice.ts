@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { AuthState } from "../../types";
+import type { IAuthState } from "../../types";
 import { loginUser, registerUser } from "./authThunk";
 import { updateProfile, loadUserFromToken } from "../profileSlice/profileThunk";
 
-const initialState: AuthState = {
+const initialState: IAuthState = {
     user: null,
     token: null,
     loading: false,

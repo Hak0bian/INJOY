@@ -12,10 +12,6 @@ const HomePage = () => {
         </button>
       </div>
       <Friends />
-      <Post />
-      <Post />
-      <Post />
-      <Post />
     </section>
   )
 }

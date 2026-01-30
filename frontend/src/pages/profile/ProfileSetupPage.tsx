@@ -1,4 +1,4 @@
-import ProfileSetup from "../../components/ProfileSetup"
+import ProfileSetup from "../../components/profile/ProfileSetup"
 
 const ProfileSetupPage = () => {
   return (

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../api/api";
 
+
 export const updateProfile = createAsyncThunk(
     "updateProfile",
     async (formData: FormData, { rejectWithValue }) => {
@@ -14,9 +15,8 @@ export const updateProfile = createAsyncThunk(
     }
 );
 
-
 export const loadUserFromToken = createAsyncThunk(
-    "auth/loadUserFromToken",
+    "loadUserFromToken",
     async (_, { rejectWithValue }) => {
         try {
             const token = localStorage.getItem("token");
