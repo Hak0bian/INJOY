@@ -1,58 +1,101 @@
-import { NavLink } from 'react-router-dom'
-import profile from '../../assets/images/profile.jpg'
+import { useEffect } from 'react';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import profile from '../../assets/images/profile.jpg';
+import { getUserPosts } from '../../store/postSlice/postThunk';
+import { followUser, getUserById } from '../../store/usersSlice/usersThunk';
 
-import post1 from '../../assets/images/post1.jpg'
-import post2 from '../../assets/images/post2.jpg'
-import post3 from '../../assets/images/post3.jpg'
-import post4 from '../../assets/images/post4.jpg'
 
 const UserProfile = () => {
+    const navigate = useNavigate()
+    const dispatch = useAppDispatch();
+    const { userId } = useParams<{ userId: string }>();
+    const { otherUser } = useAppSelector(state => state.users);
+    const { posts } = useAppSelector(state => state.posts);
+    const { user: currentUser } = useAppSelector(state => state.auth);
+    const isFollowing = otherUser?.isFollowing;
+
+    useEffect(() => {
+        if (userId) {
+            dispatch(getUserById(userId));
+            dispatch(getUserPosts(userId));
+        }
+    }, [userId]);
+
+    const handleFollow = () => {
+        if (otherUser?._id) {
+            dispatch(followUser(otherUser._id));
+        }
+    };
+    
     return (
-        <div className='pt-10 pb-30 px-5'>
-            <div className='flex flex-col gap-2'>
-                <p className='mb-2'>_user_._name_</p>
-                <div className='flex'>
-                    <img src={profile} alt="profile image" className='w-20 h-20 rounded-full' />
+        <div className="pt-10 pb-30 px-5">
+            <div className="flex flex-col gap-2">
+                <p className="mb-2">{otherUser?.profile?.username}</p>
+                <div className="flex">
+                    <img
+                        src={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : profile}
+                        alt="profile"
+                        className="w-20 h-20 rounded-full"
+                    />
                     <div>
-                        <h3 className='pl-4 text-[14px] font-semibold'>User Name</h3>
-                        <div className='flex py-4'>
-                            <div className='px-4 border-r border-graytext  text-[14px]'>
-                                <p>54</p>
+                        <h3 className="pl-4 text-[14px] font-semibold">{otherUser?.fullname}</h3>
+                        <div className="flex py-4">
+                            <div className="px-4 border-r border-graytext text-[14px]">
+                                <p>{posts.length}</p>
                                 <p>Posts</p>
                             </div>
-                            <NavLink to='/followers' className='hover:text-btn duration-300'>
-                                <div className='px-4 border-r border-graytext text-[14px]'>
-                                    <p>4564</p>
+                            <NavLink to={`/user/${userId}/followers`} className='hover:text-btn duration-300'>
+                                <div className="px-4 border-r border-graytext text-[14px]">
+                                    <p>{otherUser?.followers?.length ?? 0}</p>
                                     <p>Followers</p>
                                 </div>
                             </NavLink>
-                            <NavLink to='/following' className='hover:text-btn duration-300'>
-                                <div className='px-4  text-[14px]'>
-                                    <p>700</p>
+                            <NavLink to={`/user/${userId}/following`} className='hover:text-btn duration-300'>
+                                <div className="px-4 text-[14px]">
+                                    <p>{otherUser?.following?.length ?? 0}</p>
                                     <p>Following</p>
                                 </div>
                             </NavLink>
                         </div>
                     </div>
                 </div>
-                <p className='text-[12px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non quidem, numquam temporibus quis inventore ullam dolor voluptates nesciunt deleniti fugit?</p>
+                <p className="text-[12px]">{otherUser?.profile?.bio}</p>
 
-                <div className='flex justify-center gap-2 pt-2 pb-8'>
-                    <button className='w-full h-10 bg-btn rounded-full'>Folow</button>
-                    <button className='w-full h-10 bg-secondary rounded-full'>Message</button>
-                </div>
+                {currentUser && otherUser && currentUser._id !== otherUser._id && (
+                    <div className="flex justify-center gap-2 pt-2 pb-8">
+                        <button
+                            onClick={handleFollow}
+                            className={`w-full h-10 rounded-full cursor-pointer ${isFollowing ? 'bg-secondary' : 'bg-btn'}`}
+                        >
+                            {isFollowing ? 'Following' : 'Follow'}
+                        </button>
+                        <button className="w-full h-10 bg-secondary rounded-full cursor-pointer">Message</button>
+                    </div>
+                )}
+
             </div>
 
             {/* Posts */}
             <div className="grid grid-cols-3 gap-1">
-                {[post1, post2, post3, post4].map((post, i) => (
-                    <div key={i} className="aspect-4/5 w-full overflow-hidden bg-black">
-                        <img src={post} className="w-full h-full object-cover" />
+                {posts.map(post => (
+                    <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                        {post.image && (
+                            <img
+                                src={`http://localhost:5000/${post.image}`}
+                                className="w-full h-full object-cover cursor-pointer"
+                                onClick={() => {
+                                    if (otherUser?._id) {
+                                        navigate(`/posts/${post._id}`, { state: { userId: otherUser._id } })
+                                    }
+                                }}
+                            />
+                        )}
                     </div>
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default UserProfile
+export default UserProfile;

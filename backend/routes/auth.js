@@ -2,10 +2,10 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 
-// REGISTER
 router.post(
     "/register",
     async (req, res) => {
@@ -46,7 +46,6 @@ router.post(
 );
 
 
-// LOGIN
 router.post(
     "/login",
     async (req, res) => {
@@ -66,9 +65,9 @@ router.post(
                 user: {
                     id: user._id,
                     email: user.email,
-                    fullname: user.username,
+                    fullname: user.fullname,
                     profile: {
-                        username: user.profile.displayName,
+                        username: user.profile.username,
                         bio: user.profile.bio,
                         photo: user.profile.photo
                     },
@@ -81,5 +80,23 @@ router.post(
         }
     }
 );
+
+
+router.get("/me", authMiddleware, async (req, res) => {
+    const user = await User.findById(req.user.id)
+        .select("-password");
+
+    res.json({
+        user: {
+            _id: user._id,
+            email: user.email,
+            fullname: user.fullname,
+            profileCompleted: user.profileCompleted,
+            profile: user.profile,
+            followers: user.followers,
+            following: user.following,
+        },
+    });
+});
 
 export default router;

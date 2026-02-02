@@ -41,18 +41,18 @@ const MyProfile = () => {
             </div>
             <div className='flex justify-center pt-5 pb-10'>
                 <div className='px-5 border-r border-graytext text-center text-[14px]'>
-                    <p>54</p>
+                    <p>{posts.length}</p>
                     <p>Posts</p>
                 </div>
-                <NavLink to='/followers' className='hover:text-btn duration-300'>
+                <NavLink to={`/user/${user?._id}/followers`} className='hover:text-btn duration-300'>
                     <div className='px-5 border-r border-graytext text-center text-[14px]'>
-                        <p>4564</p>
+                        <p>{user?.followers?.length ?? 0}</p>
                         <p>Followers</p>
                     </div>
                 </NavLink>
-                <NavLink to='/following' className='hover:text-btn duration-300'>
+                <NavLink to={`/user/${user?._id}/following`} className='hover:text-btn duration-300'>
                     <div className='px-5 text-center text-[14px]'>
-                        <p>700</p>
+                        <p>{user?.following?.length ?? 0}</p>
                         <p>Following</p>
                     </div>
                 </NavLink>
@@ -62,12 +62,12 @@ const MyProfile = () => {
             <div className="grid grid-cols-3 gap-1">
                 {posts.map((post) => (
                     <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
-                        {post.image && 
-                        <img 
-                            src={`http://localhost:5000/${post.image}`} 
-                            className="w-full h-full object-cover" 
-                            onClick={() => navigate(`/posts/${post._id}`)}
-                        />}
+                        {post.image &&
+                            <img
+                                src={`http://localhost:5000/${post.image}`}
+                                className="w-full h-full object-cover cursor-pointer"
+                                onClick={() => navigate(`/posts/${post._id}`)}
+                            />}
                     </div>
                 ))}
             </div>

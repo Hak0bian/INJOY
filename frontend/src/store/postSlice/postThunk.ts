@@ -27,26 +27,25 @@ export const getUserPosts = createAsyncThunk(
 );
 
 export const updatePostText = createAsyncThunk(
-    "posts/updateText",
-    async ({ postId, text }: { postId: string; text: string }, { rejectWithValue }) => {
-        try {
-            const res = await API.updatePostText(postId, text);
-            console.log("Update response:", res);
-            return res.post;
-        } catch (err: any) {
-            return rejectWithValue(err.response?.data?.message || "Update failed");
-        }
+  "posts/updateText",
+  async ({ postId, text }: { postId: string; text: string }, { rejectWithValue }) => {
+    try {
+      const res = await API.updatePostText(postId, text);
+      return res.post;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Update failed");
     }
+  }
 );
 
 export const deletePost = createAsyncThunk(
-    "posts/delete",
-    async (postId: string, { rejectWithValue }) => {
-        try {
-            await API.deletePost(postId);
-            return postId;
-        } catch (err: any) {
-            return rejectWithValue(err.response?.data?.message);
-        }
+  "posts/delete",
+  async (postId: string, { rejectWithValue }) => {
+    try {
+      await API.deletePost(postId);
+      return postId;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message);
     }
+  }
 );

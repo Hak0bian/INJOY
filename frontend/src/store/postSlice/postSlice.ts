@@ -16,7 +16,6 @@ const postSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers(builder) {
-        // Create Post
         builder
             .addCase(createPost.fulfilled, (state, action) => {
                 state.createPostLoading = false;
@@ -31,7 +30,7 @@ const postSlice = createSlice({
                 state.createPostError = action.payload as string;
             })
 
-            // Get User Posts
+        builder
             .addCase(getUserPosts.fulfilled, (state, action) => {
                 state.getUserPostsLoading = false;
                 state.posts = action.payload;
@@ -45,7 +44,7 @@ const postSlice = createSlice({
                 state.getUserPostsError = action.payload as string;
             })
 
-            // Update & Delete Posts
+        builder
             .addCase(updatePostText.fulfilled, (state, action) => {
                 const index = state.posts.findIndex(p => p._id === action.payload._id);
                 if (index !== -1) {

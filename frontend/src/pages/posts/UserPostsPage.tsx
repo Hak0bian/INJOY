@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getUserPosts } from "../../store/postSlice/postThunk";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -9,14 +9,16 @@ import Post from "../../components/post/Post";
 const UserPostsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
+    const location = useLocation();
     const { postId } = useParams<{ postId: string }>();
     const { user } = useAppSelector((state) => state.auth);
     const { posts } = useAppSelector((state) => state.posts);
     const postRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+    const userId = location.state?.userId;
 
     useEffect(() => {
-        if (user?.id) {
-            dispatch(getUserPosts(user.id));
+        if (userId) {
+            dispatch(getUserPosts(userId));
         }
     }, [user, dispatch]);
 

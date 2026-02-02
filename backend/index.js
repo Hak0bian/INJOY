@@ -1,11 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import connectDB from "./config/db.js";
+import path from "path";
 import authRoutes from "./routes/auth.js";
 import profileRoutes from "./routes/profile.js";
-import connectDB from "./config/db.js";
+import usersRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
-import path from "path";
 import { fileURLToPath } from "url";
 
 
@@ -24,9 +25,11 @@ app.use(
     })
 );
 app.use(express.json());
-app.use("/api/auth", authRoutes);
-app.use("/api/auth", profileRoutes);
+app.use("/api/auth", authRoutes);       
+app.use("/api/profile", profileRoutes); 
+app.use("/api/user", usersRoutes);
 app.use("/api/posts", postRoutes);
+
 connectDB();
 
 const PORT = process.env.PORT || 5000;

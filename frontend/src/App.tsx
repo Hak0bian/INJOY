@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom"
 import { useEffect } from "react"
-import { HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage,
-    EditProfilePage, AddPostPage, UserPostsPage, 
+import {
+  HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage,
+  EditProfilePage, AddPostPage, UserPostsPage,
 } from "./pages/Index"
 import { Layout, ProfileGuard, ProfileSetupGuard } from "./components/index"
 import { useAppDispatch } from "./store/hooks"
@@ -12,7 +13,7 @@ const App = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    
+
     dispatch(loadUserFromToken());
   }, [dispatch]);
 
@@ -42,8 +43,9 @@ const App = () => {
             }
           />
           <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/user-profile" element={<UserProfilePage />} />
-          <Route path="/followers" element={<FollowersPage />} />
+          <Route path="/user/:userId" element={<UserProfilePage />} />
+          <Route path="/user/:id/followers" element={<FollowersPage type="followers" />} />
+          <Route path="/user/:id/following" element={<FollowersPage type="following" />} />
           <Route path="/add-post" element={<AddPostPage />} />
           <Route path="/posts/:postId" element={<UserPostsPage />} />
         </Route>

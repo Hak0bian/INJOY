@@ -4,7 +4,7 @@ import type { IAuthError, IAuthResponse, ILoginPayload, IRegisterPayload } from 
 
 
 export const registerUser = createAsyncThunk<IAuthResponse, IRegisterPayload, { rejectValue: IAuthError }>(
-    "auth/registerUser", async (payload, { rejectWithValue }) => {
+    "registerUser", async (payload, { rejectWithValue }) => {
         try {
             return await API.register(payload);
         } catch (err: any) {
@@ -14,7 +14,7 @@ export const registerUser = createAsyncThunk<IAuthResponse, IRegisterPayload, { 
 );
 
 export const loginUser = createAsyncThunk<IAuthResponse, ILoginPayload, { rejectValue: IAuthError }>(
-    "auth/loginUser",
+    "loginUser",
     async (payload, { rejectWithValue }) => {
         try {
             return await API.login(payload);

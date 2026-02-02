@@ -10,7 +10,10 @@ export interface IUser {
     email: string;
     fullname: string;
     profileCompleted: boolean;
-    profile: IProfile
+    profile: IProfile;
+    followers?: string[];
+    following?: string[];
+    isFollowing?: boolean;
 }
 
 export interface IAuthResponse {
@@ -88,7 +91,7 @@ export interface IPostProps {
     text?: string;
     likes: number;
     comments: number;
-    userId: string; 
+    userId: string;
     user: {
         fullname: string;
         profile?: {
@@ -97,4 +100,21 @@ export interface IPostProps {
             bio?: string
         };
     };
+}
+
+
+interface IUserPreview {
+    _id: string;
+    fullname: string;
+    profile: {
+        username: string;
+        photo?: string;
+    };
+}
+
+export interface FollowersState {
+    followers: IUserPreview[];
+    following: IUserPreview[];
+    loading: boolean;
+    error: string | null;
 }

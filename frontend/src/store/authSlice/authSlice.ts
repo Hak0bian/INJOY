@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { IAuthState } from "../../types";
 import { loginUser, registerUser } from "./authThunk";
 import { updateProfile, loadUserFromToken } from "../profileSlice/profileThunk";
+import { followUser } from "../usersSlice/usersThunk";
 
 const initialState: IAuthState = {
     user: null,
@@ -36,7 +37,6 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Register
             .addCase(registerUser.pending, (state) => {
                 state.loading = true; state.error = null
             })
@@ -52,7 +52,7 @@ const authSlice = createSlice({
                 state.error = action.payload?.message || "Something went wrong";
             })
 
-            // Login
+        builder
             .addCase(loginUser.pending, (state) => {
                 state.loading = true; state.error = null
             })
@@ -68,7 +68,7 @@ const authSlice = createSlice({
                 state.error = action.payload?.message || "Something went wrong";
             })
 
-            // Profile
+        builder
             .addCase(updateProfile.fulfilled, (state, action) => {
                 state.user = action.payload.user;
             })
@@ -87,7 +87,25 @@ const authSlice = createSlice({
                 state.token = null;
                 state.loading = false;
                 state.initialized = true;
+            })
+
+        builder
+            .addCase(followUser.fulfilled, (state, action) => {
+                if (!state.user) return;
+
+                const { targetUserId, following } = action.payload;
+
+                if (following) {
+                    state.user.following = [
+                        ...(state.user.following ?? []),
+                        targetUserId
+                    ];
+                } else {
+                    state.user.following =
+                        state.user.following?.filter(id => id !== targetUserId) ?? [];
+                }
             });
+
     },
 });
 
