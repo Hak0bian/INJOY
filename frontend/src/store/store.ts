@@ -3,6 +3,8 @@ import authReducer from "./authSlice/authSlice";
 import postReducer from "./postSlice/postSlice"
 import usersReducer from "./usersSlice/usersSlice"
 import followersReducer from "./followSlice/followersSlice"
+import commentsReducer from "./commentsSlice/commentsSlice"
+import savedReducer from "./SavedSlice/SavedSlice"
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
         posts: postReducer,
         users: usersReducer,
         followers: followersReducer,
+        comments: commentsReducer,
+        saved: savedReducer, 
     },
 });
 

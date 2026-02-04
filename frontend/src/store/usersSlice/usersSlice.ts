@@ -1,12 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { IUser } from "../../types";
 import { followUser, getUserById } from "./usersThunk";
+import type { UsersState } from "../storeTypes";
 
-interface UsersState {
-  otherUser: IUser | null;
-  loading: boolean;
-  error: string | null;
-}
 
 const initialState: UsersState = {
   otherUser: null,

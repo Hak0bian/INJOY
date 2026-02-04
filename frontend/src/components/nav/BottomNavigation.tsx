@@ -1,10 +1,9 @@
 import { NavLink } from "react-router-dom"
 import { GrHomeRounded } from "react-icons/gr";
-import { FaRegBookmark } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
 import { LuMessagesSquare } from "react-icons/lu";
 import { FaRegUser } from "react-icons/fa6";
-
+import { BsSearch } from "react-icons/bs";
 
 const BottomNavigation = () => {
     return (
@@ -12,8 +11,8 @@ const BottomNavigation = () => {
             <NavLink to='/' className='text-[20px]'>
                 <GrHomeRounded />
             </NavLink>
-            <NavLink to='/saved-posts' className='text-[19px]'>
-                <FaRegBookmark />
+            <NavLink to='/search' className='text-[20px]'>
+                <BsSearch />
             </NavLink>
             <NavLink to='add-post' className='text-[32px] text-btn'>
                 <FaCirclePlus />

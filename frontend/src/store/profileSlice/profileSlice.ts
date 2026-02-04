@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateProfile } from "./profileThunk";
-import type { IProfileState } from "../../types";
+import type { IProfileState } from "../storeTypes";
 
 const initialState: IProfileState = {
     loading: false,

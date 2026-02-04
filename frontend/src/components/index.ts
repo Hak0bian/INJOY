@@ -2,15 +2,13 @@ import SignIn from "./forms/SignIn";
 import SignUp from "./forms/SignUp";
 import ForgotPass from "./forms/ForgotPass";
 import Layout from "./Layout";
-import ProfileGuard from "./guards/ProfileGuard";
-import ProfileSetupGuard from "./guards/ProfileSetupGuard";
 
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import { TfiEmail } from "react-icons/tfi";
 import { LuLockKeyhole } from "react-icons/lu";
+import AuthProfileGuard from "./guards/AuthProfileGuard";
 
-
-export { SignIn, SignUp, ForgotPass, Layout, ProfileGuard, ProfileSetupGuard,
+export { SignIn, SignUp, ForgotPass, Layout, AuthProfileGuard,
     IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole 
 }

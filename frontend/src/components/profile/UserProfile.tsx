@@ -31,7 +31,7 @@ const UserProfile = () => {
     return (
         <div className="pt-10 pb-30 px-5">
             <div className="flex flex-col gap-2">
-                <p className="mb-2">{otherUser?.profile?.username}</p>
+                <p className="mb-2">@{otherUser?.profile?.username}</p>
                 <div className="flex">
                     <img
                         src={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : profile}
@@ -86,7 +86,7 @@ const UserProfile = () => {
                                 className="w-full h-full object-cover cursor-pointer"
                                 onClick={() => {
                                     if (otherUser?._id) {
-                                        navigate(`/posts/${post._id}`, { state: { userId: otherUser._id } })
+                                        navigate(`/user/${otherUser._id}/posts/${post._id}`, { state: { userId: otherUser._id } })
                                     }
                                 }}
                             />

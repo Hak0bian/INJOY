@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getFollowers, getFollowing } from "./followersThunk";
-import type { FollowersState } from "../../types";
+import { getFollowCounts, getFollowers, getFollowing } from "./followersThunk";
+import type { FollowersState } from "../storeTypes";
 
 
 const initialState: FollowersState = {
     followers: [],
     following: [],
+    followersCount: 0,
+    followingCount: 0,
     loading: false,
     error: null,
 };
@@ -40,7 +42,12 @@ const followersSlice = createSlice({
             .addCase(getFollowing.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            .addCase(getFollowCounts.fulfilled, (state, action) => {
+                state.followersCount = action.payload.followersCount;
+                state.followingCount = action.payload.followingCount;
             });
+
     },
 });
 

@@ -1,8 +1,8 @@
 import axios from "axios";
-import type { IRegisterPayload, ILoginPayload, IAuthResponse, IUser, IPost } from "../types";
+import type { IUser, IPost, ILikePostResponse } from "../types";
+import type { IRegisterPayload, ILoginPayload, IAuthResponse, IComment } from "../store/storeTypes"
 
 const BASE_URL = "http://localhost:5000/api";
-
 const instance = axios.create({
     baseURL: BASE_URL,
 });
@@ -38,6 +38,9 @@ export const API = {
     },
 
     // Posts
+    getPost(postId: string) {
+        return instance.get<IPost>(`/posts/${postId}`).then(res => res.data);
+    },
     getUserPosts(userId: string) {
         return instance.get<{ posts: IPost[] }>(`/posts/user/${userId}`).then(res => res.data);
     },
@@ -53,6 +56,11 @@ export const API = {
     deletePost(postId: string) {
         return instance.delete(`/posts/${postId}`).then(() => { });
     },
+
+    likePost(postId: string) {
+        return instance.post<ILikePostResponse>(`/posts/${postId}/like`).then(res => res.data);
+    },
+
 
     // Users 
     getUser(userId: string) {
@@ -71,5 +79,25 @@ export const API = {
 
     getFollowing: (userId: string) => {
         return instance.get(`/user/${userId}/following`)
-    }
+    },
+
+    getFollowCounts: async (userId: string) => {
+        const res = await instance.get(`/user/${userId}/follow-counts`);
+        return res.data;
+    },
+
+    // Comments
+    getComments(postId: string) {
+        return instance.get<IComment[]>(`/comments/${postId}`).then(res => res.data);
+    },
+
+    addComment(postId: string, text: string) {
+        return instance.post<{ comment: IComment; commentsCount: number }>(`/comments/${postId}`, { text }).then(res => res.data);
+    },
+
+    deleteComment: async (commentId: string) => {
+        return instance.delete(`/comments/${commentId}`).then(res => res.data);
+    },
+
+
 };

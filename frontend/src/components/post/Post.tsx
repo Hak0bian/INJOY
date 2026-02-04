@@ -1,18 +1,40 @@
 import { useState } from "react";
-import { FaRegHeart, FaRegComment, FaRegBookmark } from "react-icons/fa";
+import { FaRegHeart, FaRegComment } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
+import { GoBookmarkFill, GoBookmark } from "react-icons/go";
+import { FaHeart } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import type { IPostProps } from "../../types";
-import { updatePostText, deletePost } from "../../store/postSlice/postThunk";
+import { updatePostText, deletePost, likePost } from "../../store/postSlice/postThunk";
+import CommentsPanel from "./CommentsPanel";
+import { toggleSavedPost } from "../../store/SavedSlice/SavedSlice";
+import profileImg from "../../assets/images/profile.jpg"
+
 
 const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) => {
     const dispatch = useAppDispatch();
     const authUser = useAppSelector((state) => state.auth.user);
-    const isOwnPost = authUser?.id === userId;
+    const authUserId = authUser?._id || authUser?.id;
     const [openOptions, setOpenOptions] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(text || "");
+    const [commentsOpen, setCommentsOpen] = useState(false);
+    const isLiked = authUserId ? likes.includes(authUserId) : false;
+    const isOwnPost = authUserId === userId;
+    const { savedItems } = useAppSelector((state) => state.saved);
+    const saved = savedItems.some(item => item.postId === id && item.userId === userId);
+
+    const handleSavePost = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!id || !userId) return;
+
+        dispatch(toggleSavedPost({ postId: id, userId }));
+    };
+
+    const handleLike = () => {
+        dispatch(likePost(id));
+    };
 
     const handleSaveText = () => {
         dispatch(updatePostText({ postId: id, text: editedText }))
@@ -25,16 +47,17 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
         dispatch(deletePost(id));
     };
 
+
     return (
         <div className="my-10">
             <div className="flex items-center justify-between mb-2">
-                <NavLink to={`/user-posts/${id}`}>
+                <NavLink to={`/user/${userId}`}>
                     <div className="flex items-center gap-2 text-[14px]">
                         <img
                             src={
                                 user.profile?.photo
                                     ? `http://localhost:5000/${user.profile.photo.replace("\\", "/")}`
-                                    : "/default-profile.jpg"
+                                    : profileImg
                             }
                             alt={user.fullname}
                             className="w-8 h-8 rounded-full"
@@ -64,16 +87,28 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                 )}
 
                 <div className="absolute bottom-2 left-2 flex gap-4 bg-secondary px-5 py-2 rounded-xl">
-                    <div className="flex gap-1 items-center">
-                        <FaRegHeart />
-                        <p>{likes}</p>
+                    <div className="flex gap-1 items-center ">
+                        <button
+                            onClick={handleLike}
+                            className="cursor-pointer"
+                        >
+                            {isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+                        </button>
+                        {likes.length}
                     </div>
                     <div className="flex gap-1 items-center">
-                        <FaRegComment />
-                        <p>{comments}</p>
+                        <button
+                            onClick={() => setCommentsOpen(true)}
+                            className="cursor-pointer"
+                        >
+                            <FaRegComment />
+                        </button>
+                        {comments}
                     </div>
-                    <button>
-                        <FaRegBookmark />
+                    <button onClick={handleSavePost} className="text-[18px]">
+                        {
+                            saved ? <GoBookmarkFill /> : <GoBookmark />
+                        }
                     </button>
                 </div>
 
@@ -97,6 +132,13 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                     </div>
                 )}
             </div>
+
+            {commentsOpen && (
+                <CommentsPanel
+                    postId={id}
+                    onClose={() => setCommentsOpen(false)}
+                />
+            )}
 
             {isEditing ? (
                 <div className="flex gap-1 pt-2">

@@ -16,43 +16,16 @@ export interface IUser {
     isFollowing?: boolean;
 }
 
-export interface IAuthResponse {
-    token: string;
-    user: IUser;
-}
-
-export interface IAuthError {
-    message: string;
-}
-
-export interface ILoginPayload {
-    email: string;
-    password: string;
-}
-
-export interface IRegisterPayload {
-    username: string;
-    email: string;
-    password: string;
-}
-
-export interface IAuthState {
-    user: IUser | null;
-    token: string | null;
-    loading: boolean;
-    error: string | null;
-    initialized: boolean;
-}
-
-export interface IProfileState {
-    loading: boolean;
-    error: string | null;
-    initialized: boolean;
-}
-
-
 export interface IPost {
+    post: any;
     _id: string;
+    image?: string;
+    text?: string;
+    likes: string[];
+    isLiked: boolean;
+    commentsCount: number;
+    createdAt: string;
+    updatedAt: string;
 
     user: {
         _id: string;
@@ -63,33 +36,26 @@ export interface IPost {
         };
     };
 
-    image?: string;
-    text?: string;
-    likes: string[];
-    createdAt: string;
-    updatedAt: string;
-
     comments: {
-        user: string;
+        _id: string;
         text: string;
         createdAt: string;
+        user: {
+            _id: string;
+            fullname: string;
+            profile?: {
+                username?: string;
+                photo?: string;
+            };
+        };
     }[];
-
-}
-
-export interface IPostsState {
-    posts: IPost[];
-    createPostLoading: boolean;
-    createPostError: string | null;
-    getUserPostsLoading: boolean;
-    getUserPostsError: string | null;
 }
 
 export interface IPostProps {
     id: string;
     image?: string;
     text?: string;
-    likes: number;
+    likes: string[];
     comments: number;
     userId: string;
     user: {
@@ -102,19 +68,8 @@ export interface IPostProps {
     };
 }
 
-
-interface IUserPreview {
-    _id: string;
-    fullname: string;
-    profile: {
-        username: string;
-        photo?: string;
-    };
-}
-
-export interface FollowersState {
-    followers: IUserPreview[];
-    following: IUserPreview[];
-    loading: boolean;
-    error: string | null;
+export interface ILikePostResponse {
+    postId: string;
+    liked: boolean;
+    likes: string[]
 }

@@ -25,3 +25,11 @@ export const getFollowing = createAsyncThunk(
         }
     }
 );
+
+export const getFollowCounts = createAsyncThunk<{ followersCount: number; followingCount: number }, string>(
+    "getFollowersCounts",
+    async (userId) => {
+        const res = await API.getFollowCounts(userId);
+        return res;
+    }
+);

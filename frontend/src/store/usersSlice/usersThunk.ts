@@ -16,7 +16,7 @@ export const getUserById = createAsyncThunk(
 );
 
 export const followUser = createAsyncThunk(
-  "users/follow",
+  "follow",
   async (targetUserId: string, { getState }) => {
     const res = await API.followUser(targetUserId);
     const state = getState() as RootState;

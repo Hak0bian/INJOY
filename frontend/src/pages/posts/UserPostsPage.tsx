@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getUserPosts } from "../../store/postSlice/postThunk";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -9,21 +9,20 @@ import Post from "../../components/post/Post";
 const UserPostsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-    const location = useLocation();
-    const { postId } = useParams<{ postId: string }>();
-    const { user } = useAppSelector((state) => state.auth);
     const { posts } = useAppSelector((state) => state.posts);
-    const postRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-    const userId = location.state?.userId;
+    const postRefs = useRef<{[key: string]: HTMLDivElement | null }>({});
+    const { postId, userId } = useParams<{postId: string; userId: string}>();
+    const hasScrolledRef = useRef(false);
 
     useEffect(() => {
-        if (userId) {
-            dispatch(getUserPosts(userId));
-        }
-    }, [user, dispatch]);
+        if (!userId) return;
+        dispatch(getUserPosts(userId));
+    }, [userId, dispatch]);
 
     useEffect(() => {
-        if (postId && postRefs.current[postId]) {
+        if (postId && postRefs.current[postId] && !hasScrolledRef.current) {
+            hasScrolledRef.current = true;
+
             setTimeout(() => {
                 postRefs.current[postId]?.scrollIntoView({
                     behavior: "smooth",
@@ -33,10 +32,9 @@ const UserPostsPage = () => {
         }
     }, [postId, posts]);
 
-
     return (
-        <div className="min-h-screen px-5 py-5 space-y-5">
-            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full py-2">
+        <div className="min-h-screen py-5">
+            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
                 </button>
@@ -47,6 +45,7 @@ const UserPostsPage = () => {
                 <div
                     key={post._id}
                     ref={(el) => { postRefs.current[post._id] = el ?? null }}
+                    className="px-5"
                 >
                     <Post
                         id={post._id}
@@ -54,8 +53,8 @@ const UserPostsPage = () => {
                         userId={post.user._id}
                         image={post.image}
                         text={post.text}
-                        likes={post.likes.length}
-                        comments={post.comments.length}
+                        likes={post.likes.map(String)}
+                        comments={post.commentsCount}
                     />
                 </div>
             ))}

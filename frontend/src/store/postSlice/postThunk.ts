@@ -14,6 +14,7 @@ export const createPost = createAsyncThunk(
   }
 );
 
+
 export const getUserPosts = createAsyncThunk(
   "getUserPosts",
   async (userId: string, { rejectWithValue }) => {
@@ -26,8 +27,9 @@ export const getUserPosts = createAsyncThunk(
   }
 );
 
+
 export const updatePostText = createAsyncThunk(
-  "posts/updateText",
+  "updatePostText",
   async ({ postId, text }: { postId: string; text: string }, { rejectWithValue }) => {
     try {
       const res = await API.updatePostText(postId, text);
@@ -38,12 +40,25 @@ export const updatePostText = createAsyncThunk(
   }
 );
 
+
 export const deletePost = createAsyncThunk(
-  "posts/delete",
+  "deletePost",
   async (postId: string, { rejectWithValue }) => {
     try {
       await API.deletePost(postId);
       return postId;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message);
+    }
+  }
+);
+
+
+export const likePost = createAsyncThunk<{ postId: string; liked: boolean; likes: string[] }, string, { rejectValue: string }>(
+  "likePost",
+  async (postId, { rejectWithValue }) => {
+    try {
+      return await API.likePost(postId);
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message);
     }

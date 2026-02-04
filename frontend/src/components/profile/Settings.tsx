@@ -2,9 +2,12 @@ import { NavLink, useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../../store/hooks";
 import { logout } from "../../store/authSlice/authSlice";
 import { IoCloseOutline } from "react-icons/io5";
+import { GrBookmark } from "react-icons/gr";
+import { BiSolidEditAlt } from "react-icons/bi";
+import { TbLogout } from "react-icons/tb";
 
 
-const Settings = ({ open, onClose }: { open: boolean; onClose: () => void; }) => {
+const Settings = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ const Settings = ({ open, onClose }: { open: boolean; onClose: () => void; }) =>
                     ${open ? "translate-x-0" : "translate-x-full"}
                 `}
             >
-                <div className='p-5 flex flex-col items-baseline gap-2'>
+                <div className='p-5 flex flex-col items-baseline gap-3'>
                     <div className="w-full flex justify-between items-center mb-5">
                         <h3 className='text-[20px] font-semibold'>Settings</h3>
                         <button onClick={onClose} className="cursor-pointer">
@@ -31,11 +34,17 @@ const Settings = ({ open, onClose }: { open: boolean; onClose: () => void; }) =>
                         </button>
                     </div>
 
-                    <NavLink to='/edit-profile' onClick={onClose} className='cursor-pointer'>
+                    <NavLink to='/saved-posts' className='cursor-pointer flex items-center gap-2 pl-0.5'>
+                        <GrBookmark />
+                        Saved Posts
+                    </NavLink>
+                    <NavLink to='/edit-profile' onClick={onClose} className='cursor-pointer flex items-center gap-2'>
+                        <BiSolidEditAlt size={20} />
                         Edit Profile
                     </NavLink>
 
-                    <button onClick={handleLogout} className="cursor-pointer text-red-500">
+                    <button onClick={handleLogout} className="cursor-pointer text-red-500 flex items-center gap-2 pl-0.5">
+                        <TbLogout size={20} />
                         Log Out
                     </button>
                 </div>

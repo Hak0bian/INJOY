@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../api/api";
-import type { IAuthError, IAuthResponse, ILoginPayload, IRegisterPayload } from "../../types";
+import type { IAuthError, IAuthResponse, ILoginPayload, IRegisterPayload } from "../storeTypes";
 
 
 export const registerUser = createAsyncThunk<IAuthResponse, IRegisterPayload, { rejectValue: IAuthError }>(

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPost, deletePost, getUserPosts, updatePostText } from "./postThunk";
-import type { IPostsState } from "../../types";
+import { createPost, deletePost, getUserPosts, likePost, updatePostText } from "./postThunk";
+import type { IPostsState } from "../storeTypes";
+import { addComment, deleteComment } from "../commentsSlice/commentsThunk";
 
 
 const initialState: IPostsState = {
@@ -51,10 +52,35 @@ const postSlice = createSlice({
                     state.posts[index].text = action.payload.text;
                 }
             })
-
             .addCase(deletePost.fulfilled, (state, action) => {
                 state.posts = state.posts.filter(p => p._id !== action.payload);
-            });
+            })
+
+        builder
+            .addCase(addComment.fulfilled, (state, action) => {
+                const post = state.posts.find(p => p._id === action.meta.arg.postId);
+
+                if (post) {
+                    post.commentsCount = action.payload.commentsCount;
+                }
+            })
+            .addCase(likePost.fulfilled, (state, action) => {
+                const { postId, liked, likes } = action.payload;
+                const post = state.posts.find(p => p._id === postId);
+                if (!post) return;
+
+                post.isLiked = liked;
+                post.likes = likes;
+            })
+            .addCase(deleteComment.fulfilled, (state, action) => {
+                const post = state.posts.find(
+                    p => p._id === action.payload.postId
+                );
+
+                if (post) {
+                    post.commentsCount -= 1;
+                }
+            })
     },
 });
 

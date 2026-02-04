@@ -11,68 +11,6 @@ const Friends = () => {
             </div>
         </NavLink>
 
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-        <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
-
-         <NavLink to=''>
-            <div className="text-[12px] w-12 overflow-hidden">
-                <img src={profile} className="w-12 h-12 rounded-full" />
-                <p>username</p>
-            </div>
-        </NavLink>
     </div>
   )
 }

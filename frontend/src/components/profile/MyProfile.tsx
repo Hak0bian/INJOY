@@ -6,20 +6,36 @@ import { getUserPosts } from '../../store/postSlice/postThunk';
 import { useNavigate } from "react-router-dom";
 import Settings from './Settings';
 import profile from '../../assets/images/profile.jpg'
+import { getFollowCounts } from '../../store/followSlice/followersThunk';
 
 
 const MyProfile = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-    const { user } = useAppSelector((state) => state.auth);
+    const { user, initialized } = useAppSelector(state => state.auth);
     const { posts } = useAppSelector((state) => state.posts);
     const [openSettings, setOpenSettings] = useState(false)
+    const { followersCount, followingCount } = useAppSelector(state => state.followers);
+    const userId = user?.id || user?._id;
 
     useEffect(() => {
-        if (user?.id) {
-            dispatch(getUserPosts(user.id));
-        }
-    }, [user, dispatch]);
+        if (!initialized) return;
+        const userId = user?.id || user?._id;
+
+        if (!userId) return;
+        dispatch(getUserPosts(userId));
+    }, [initialized, user?.id, user?._id, dispatch]);
+
+    useEffect(() => {
+        if (!initialized) return;
+
+        const userId = user?.id || user?._id;
+        if (!userId) return;
+
+        dispatch(getUserPosts(userId));
+        dispatch(getFollowCounts(userId));
+    }, [initialized, user?.id, user?._id, dispatch]);
+
 
     return (
         <div className='pt-5 pb-30 px-5'>
@@ -30,7 +46,7 @@ const MyProfile = () => {
             </div>
 
             <div className='flex flex-col gap-2 pt-6'>
-                <p className='text-center text-[14px]'>{user?.profile?.username}</p>
+                <p className='text-center text-[14px]'>@{user?.profile?.username}</p>
                 <img
                     src={user?.profile?.photo ? `http://localhost:5000/${user?.profile?.photo.replace("\\", "/")}` : profile}
                     alt="profile image"
@@ -39,37 +55,44 @@ const MyProfile = () => {
                 <h3 className='font-semibold'>{user?.fullname || ""}</h3>
                 <p className='text-[12px]'>{user?.profile?.bio || ""}</p>
             </div>
-            <div className='flex justify-center pt-5 pb-10'>
+            <div className='flex justify-center pt-5 pb-8'>
                 <div className='px-5 border-r border-graytext text-center text-[14px]'>
                     <p>{posts.length}</p>
                     <p>Posts</p>
                 </div>
-                <NavLink to={`/user/${user?._id}/followers`} className='hover:text-btn duration-300'>
+                <NavLink to={`/user/${userId}/followers`} className='hover:text-btn duration-300'>
                     <div className='px-5 border-r border-graytext text-center text-[14px]'>
-                        <p>{user?.followers?.length ?? 0}</p>
+                        <p>{followersCount}</p>
                         <p>Followers</p>
                     </div>
                 </NavLink>
-                <NavLink to={`/user/${user?._id}/following`} className='hover:text-btn duration-300'>
+                <NavLink to={`/user/${userId}/following`} className='hover:text-btn duration-300'>
                     <div className='px-5 text-center text-[14px]'>
-                        <p>{user?.following?.length ?? 0}</p>
+                        <p>{followingCount}</p>
                         <p>Following</p>
                     </div>
                 </NavLink>
             </div>
 
             {/* Posts */}
-            <div className="grid grid-cols-3 gap-1">
-                {posts.map((post) => (
-                    <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
-                        {post.image &&
-                            <img
-                                src={`http://localhost:5000/${post.image}`}
-                                className="w-full h-full object-cover cursor-pointer"
-                                onClick={() => navigate(`/posts/${post._id}`)}
-                            />}
+            <div>
+                {posts.length === 0 ? (
+                    <p className="text-center text-graytext border-t border-graytext pt-5">No posts yet</p>
+                ) : (
+                    <div className="grid grid-cols-3 gap-1">
+                        {posts.map((post) => (
+                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                                {post.image && (
+                                    <img
+                                        src={`http://localhost:5000/${post.image}`}
+                                        className="w-full h-full object-cover cursor-pointer"
+                                        onClick={() => navigate(`/user/${user?._id}/posts/${post._id}`)}
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
 
             <Settings open={openSettings} onClose={() => setOpenSettings(false)} />

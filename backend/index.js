@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import profileRoutes from "./routes/profile.js";
 import usersRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
+import commentsRoutes from "./routes/comments.js"
 import { fileURLToPath } from "url";
 
 
@@ -29,7 +30,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes); 
 app.use("/api/user", usersRoutes);
 app.use("/api/posts", postRoutes);
-
+app.use("/api/comments", commentsRoutes);
 connectDB();
 
 const PORT = process.env.PORT || 5000;
