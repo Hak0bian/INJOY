@@ -12,6 +12,7 @@ const Settings = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        localStorage.removeItem("token");
         dispatch(logout());
         navigate("/sign-in");
         onClose();
@@ -52,6 +53,5 @@ const Settings = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
         </>
     )
 }
-
 
 export default Settings

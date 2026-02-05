@@ -17,25 +17,38 @@ const commentsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getComments.pending, (state) => {
-                state.loading = true;
-            })
             .addCase(getComments.fulfilled, (state, action) => {
                 state.loading = false;
                 state.comments = action.payload;
             })
-
-            .addCase(addComment.fulfilled, (state, action) => {
-                state.comments.unshift(action.payload.comment);
+            .addCase(getComments.pending, (state) => {
+                state.loading = true;
             })
-
-        builder
+            .addCase(getComments.rejected, (state) => {
+                state.loading = false;
+            })
+            .addCase(addComment.fulfilled, (state, action) => {
+                const { comment } = action.payload;
+                if (!comment.parent) {
+                    state.comments.unshift(comment);
+                } else {
+                    const parentComment = state.comments.find(c => c._id === comment.parent);
+                    if (parentComment) {
+                        if (!parentComment.replies) parentComment.replies = [];
+                        parentComment.replies.push(comment);
+                    }
+                }
+            })
             .addCase(deleteComment.fulfilled, (state, action) => {
-                state.comments = state.comments.filter(
-                    c => c._id !== action.payload.commentId
-                );
-            });
+                const { commentId } = action.payload;
 
+                state.comments = state.comments.filter(c => c._id !== commentId);
+                state.comments.forEach(c => {
+                    if (c.replies) {
+                        c.replies = c.replies.filter(r => r._id !== commentId);
+                    }
+                });
+            });
     },
 });
 

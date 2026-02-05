@@ -27,7 +27,7 @@ const UserProfile = () => {
             dispatch(followUser(otherUser._id));
         }
     };
-    
+
     return (
         <div className="pt-10 pb-30 px-5">
             <div className="flex flex-col gap-2">
@@ -60,7 +60,7 @@ const UserProfile = () => {
                         </div>
                     </div>
                 </div>
-                <p className="text-[12px]">{otherUser?.profile?.bio}</p>
+                <p className="text-[12px] pb-3">{otherUser?.profile?.bio}</p>
 
                 {currentUser && otherUser && currentUser._id !== otherUser._id && (
                     <div className="flex justify-center gap-2 pt-2 pb-8">
@@ -73,26 +73,31 @@ const UserProfile = () => {
                         <button className="w-full h-10 bg-secondary rounded-full cursor-pointer">Message</button>
                     </div>
                 )}
-
             </div>
 
             {/* Posts */}
-            <div className="grid grid-cols-3 gap-1">
-                {posts.map(post => (
-                    <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
-                        {post.image && (
-                            <img
-                                src={`http://localhost:5000/${post.image}`}
-                                className="w-full h-full object-cover cursor-pointer"
-                                onClick={() => {
-                                    if (otherUser?._id) {
-                                        navigate(`/user/${otherUser._id}/posts/${post._id}`, { state: { userId: otherUser._id } })
-                                    }
-                                }}
-                            />
-                        )}
+            <div>
+                {posts.length === 0 ? (
+                    <p className="text-center text-graytext border-t border-graytext pt-5">No posts yet</p>
+                ) : (
+                    <div className="grid grid-cols-3 gap-1">
+                        {posts.map(post => (
+                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                                {post.image && (
+                                    <img
+                                        src={`http://localhost:5000/${post.image}`}
+                                        className="w-full h-full object-cover cursor-pointer"
+                                        onClick={() => {
+                                            if (otherUser?._id) {
+                                                navigate(`/user/${otherUser._id}/posts/${post._id}`, { state: { userId: otherUser._id } })
+                                            }
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

@@ -57,13 +57,22 @@ const postSlice = createSlice({
             })
 
         builder
+        builder
             .addCase(addComment.fulfilled, (state, action) => {
                 const post = state.posts.find(p => p._id === action.meta.arg.postId);
-
                 if (post) {
-                    post.commentsCount = action.payload.commentsCount;
+                    post.commentsCount = action.payload.totalComments;
+                }
+            });
+
+        builder
+            .addCase(deleteComment.fulfilled, (state, action) => {
+                const post = state.posts.find(p => p._id === action.payload.postId);
+                if (post) {
+                    post.commentsCount = action.payload.totalComments;
                 }
             })
+
             .addCase(likePost.fulfilled, (state, action) => {
                 const { postId, liked, likes } = action.payload;
                 const post = state.posts.find(p => p._id === postId);
@@ -71,15 +80,6 @@ const postSlice = createSlice({
 
                 post.isLiked = liked;
                 post.likes = likes;
-            })
-            .addCase(deleteComment.fulfilled, (state, action) => {
-                const post = state.posts.find(
-                    p => p._id === action.payload.postId
-                );
-
-                if (post) {
-                    post.commentsCount -= 1;
-                }
             })
     },
 });

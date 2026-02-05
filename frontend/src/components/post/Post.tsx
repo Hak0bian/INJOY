@@ -105,7 +105,7 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                         </button>
                         {comments}
                     </div>
-                    <button onClick={handleSavePost} className="text-[18px]">
+                    <button onClick={handleSavePost} className="text-[18px] cursor-pointer">
                         {
                             saved ? <GoBookmarkFill /> : <GoBookmark />
                         }

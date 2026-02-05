@@ -91,13 +91,12 @@ export const API = {
         return instance.get<IComment[]>(`/comments/${postId}`).then(res => res.data);
     },
 
-    addComment(postId: string, text: string) {
-        return instance.post<{ comment: IComment; commentsCount: number }>(`/comments/${postId}`, { text }).then(res => res.data);
+    addComment(postId: string, text: string, parent?: string) {
+        return instance.post<{ comment: IComment; totalComments: number }>(`/comments/${postId}`, { text, parent }).then(res => res.data);
     },
 
-    deleteComment: async (commentId: string) => {
-        return instance.delete(`/comments/${commentId}`).then(res => res.data);
+    deleteComment(commentId: string) {
+        return instance.delete<{ commentId: string; postId: string; totalComments: number }>(`/comments/${commentId}`).then(res => res.data);
     },
-
 
 };

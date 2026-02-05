@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import Post from "../models/Post.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-
+import Comment from "../models/Comment.js";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
@@ -40,10 +40,15 @@ router.get("/:id", authMiddleware, async (req, res) => {
             .populate("user", "fullname profile");
 
         if (!post) return res.status(404).json({ message: "Post not found" });
+        const totalComments = await Comment.countDocuments({ post: post._id });
 
-        res.status(200).json({ post });
+        res.status(200).json({
+            post: {
+                ...post.toObject(),
+                totalComments
+            }
+        });
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -51,12 +56,23 @@ router.get("/:id", authMiddleware, async (req, res) => {
 // Get posts by user
 router.get("/user/:userId", authMiddleware, async (req, res) => {
     try {
-        const posts = await Post.find({ user: req.params.userId })
+        const userId = req.params.userId;
+        const posts = await Post.find({ user: userId })
             .populate("user", "fullname profile")
-            .sort({ createdAt: -1 })
+            .sort({ createdAt: -1 });
 
-        res.status(200).json({ posts });
+        const postsWithTotalComments = await Promise.all(
+            posts.map(async post => {
+                const totalComments = await Comment.countDocuments({ post: post._id });
+                return {
+                    ...post.toObject(),
+                    totalComments
+                };
+            })
+        );
+        res.status(200).json({ posts: postsWithTotalComments });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -76,7 +92,6 @@ router.patch("/:id", authMiddleware, async (req, res) => {
     res.json({ post });
 });
 
-
 // Delete post
 router.delete("/:id", authMiddleware, async (req, res) => {
     const post = await Post.findById(req.params.id);
@@ -88,7 +103,6 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     await post.deleteOne();
     res.json({ success: true });
 });
-
 
 // Likes on Post
 router.post("/:id/like", authMiddleware, async (req, res) => {
@@ -116,6 +130,5 @@ router.post("/:id/like", authMiddleware, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
 
 export default router;

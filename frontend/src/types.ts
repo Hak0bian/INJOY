@@ -24,6 +24,7 @@ export interface IPost {
     likes: string[];
     isLiked: boolean;
     commentsCount: number;
+    totalComments?: number;
     createdAt: string;
     updatedAt: string;
 

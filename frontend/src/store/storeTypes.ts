@@ -1,6 +1,5 @@
 import type { IPost, IUser } from "../types";
 
-
 export interface IAuthResponse {
     token: string;
     user: IUser;
@@ -33,6 +32,8 @@ export interface IComment {
     _id: string;
     text: string;
     createdAt: string;
+    parent?: string | null; 
+    replies?: IComment[];
     user: {
         _id: string;
         fullname: string;
