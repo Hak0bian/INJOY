@@ -28,3 +28,15 @@ export const followUser = createAsyncThunk(
     };
   }
 );
+
+export const searchUsers = createAsyncThunk(
+  "search",
+  async (query: string, { rejectWithValue }) => {
+    try {
+      const res = await API.searchUsers(query);
+      return res.users;
+    } catch (err: any) {
+      return rejectWithValue("Search failed");
+    }
+  }
+);

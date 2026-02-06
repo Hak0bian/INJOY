@@ -34,7 +34,7 @@ router.post(
     }
 );
 
-// GET FEED POSTS
+// Get feed posts
 router.get("/feed", authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
@@ -46,9 +46,7 @@ router.get("/feed", authMiddleware, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        let posts = await Post.find({
-            user: { $in: me.following },
-        })
+        let posts = await Post.find({user: { $in: me.following }})
             .populate("user", "fullname profile")
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -59,25 +57,18 @@ router.get("/feed", authMiddleware, async (req, res) => {
         if (posts.length < limit) {
             const excludeUsers = [...me.following, userId];
 
-            const recommended = await Post.find({
-                user: { $nin: excludeUsers },
-            })
+            const recommended = await Post.find({user: { $nin: excludeUsers }})
                 .populate("user", "fullname profile")
                 .sort({ createdAt: -1 })
                 .limit(limit - posts.length);
 
-            const filteredRecommended = recommended.filter(
-                p => p.user !== null
-            );
-
+            const filteredRecommended = recommended.filter(p => p.user !== null);
             posts = [...posts, ...filteredRecommended];
         }
 
         const postsWithCounts = await Promise.all(
             posts.map(async post => {
-                const totalComments = await Comment.countDocuments({
-                    post: post._id,
-                });
+                const totalComments = await Comment.countDocuments({post: post._id});
 
                 return {
                     ...post.toObject(),
@@ -85,10 +76,42 @@ router.get("/feed", authMiddleware, async (req, res) => {
                 };
             })
         );
-
         res.json({ posts: postsWithCounts });
     } catch (err) {
-        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Get recommended posts 
+router.get("/recommended", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const me = await User.findById(userId).select("following");
+
+        if (!me) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const excludeUsers = [...me.following, userId];
+
+        let recommendedPosts = await Post.find({ user: { $nin: excludeUsers } })
+            .populate("user", "fullname profile")
+            .sort({ createdAt: -1 })
+            .limit(30);
+
+        recommendedPosts = recommendedPosts.filter(p => p.user !== null);
+
+        const postsWithCounts = await Promise.all(
+            recommendedPosts.map(async post => {
+                const totalComments = await Comment.countDocuments({ post: post._id });
+                return {
+                    ...post.toObject(),
+                    commentsCount: totalComments,
+                };
+            })
+        );
+        res.json(postsWithCounts);
+    } catch (err) {
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -132,7 +155,6 @@ router.get("/user/:userId", authMiddleware, async (req, res) => {
         );
         res.status(200).json({ posts: postsWithTotalComments });
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: "Server error" });
     }
 });
@@ -190,9 +212,6 @@ router.post("/:id/like", authMiddleware, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
-
-
 
 
 export default router;

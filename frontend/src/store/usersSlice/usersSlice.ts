@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { followUser, getUserById } from "./usersThunk";
+import { followUser, getUserById, searchUsers } from "./usersThunk";
 import type { UsersState } from "../storeTypes";
 
 
@@ -7,6 +7,10 @@ const initialState: UsersState = {
   otherUser: null,
   loading: false,
   error: null,
+  searchResults: [],
+  searchLoading: false,
+  searchError: null
+
 };
 
 const userSlice = createSlice({
@@ -36,15 +40,29 @@ const userSlice = createSlice({
       .addCase(followUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
 
-    builder
       .addCase(getUserById.fulfilled, (state, action) => {
         state.otherUser = {
           ...action.payload,
           isFollowing: action.payload.isFollowing ?? false,
         };
+      })
+
+    builder
+      .addCase(searchUsers.pending, (state) => {
+        state.searchLoading = true;
+        state.searchError = null;
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.searchLoading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.searchLoading = false;
+        state.searchError = action.payload as string;
       });
+
   },
 })
 

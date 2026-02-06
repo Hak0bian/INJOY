@@ -77,3 +77,16 @@ export const getFeedPosts = createAsyncThunk(
     }
   }
 );
+
+
+export const getRecommendedPosts = createAsyncThunk(
+    "post/getRecommended",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await API.getRecommendedPosts();
+            return res;
+        } catch (err: any) {
+            return rejectWithValue(err.response?.data?.message || "Failed to fetch recommended posts");
+        }
+    }
+);

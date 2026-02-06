@@ -1,19 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPost, deletePost, getFeedPosts, getUserPosts, likePost, updatePostText } from "./postThunk";
+import { createPost, deletePost, getFeedPosts, getRecommendedPosts, getUserPosts, likePost, updatePostText } from "./postThunk";
 import type { IPostsState } from "../storeTypes";
 import { addComment, deleteComment } from "../commentsSlice/commentsThunk";
 
 
 const initialState: IPostsState = {
     posts: [],
+    getUserPostsLoading: false,
+    getUserPostsError: null,
     feedPosts: [],
     feedLoading: false,
     feedError: null,
+    recommendedPosts: [],
+    recLoading: false,
+    recError: null,
     noMoreFeedPosts: false,
     createPostLoading: false,
     createPostError: null,
-    getUserPostsLoading: false,
-    getUserPostsError: null,
 };
 
 const postSlice = createSlice({
@@ -104,6 +107,20 @@ const postSlice = createSlice({
             .addCase(getFeedPosts.rejected, (state, action) => {
                 state.feedLoading = false;
                 state.feedError = action.payload as string;
+            })
+
+        builder
+            .addCase(getRecommendedPosts.pending, (state) => {
+                state.recLoading = true;
+                state.recError = null;
+            })
+            .addCase(getRecommendedPosts.fulfilled, (state, action) => {
+                state.recLoading = false;
+                state.recommendedPosts = action.payload;
+            })
+            .addCase(getRecommendedPosts.rejected, (state, action) => {
+                state.recLoading = false;
+                state.recError = action.payload as string;
             });
     },
 });

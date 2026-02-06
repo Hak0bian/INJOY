@@ -11,7 +11,9 @@ import AddPostPage from "./posts/AddPostPage";
 import UserPostsPage from "./posts/UserPostsPage";
 import SavedPostsPage from "./save/SavedPostsPage";
 import SavedPostDetailPage from "./save/SavedPostDetailPage";
+import SearchPage from "./search/SearchPage";
+import SearchPostsPage from "./search/SearchPostsPage";
 
 export { SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
-    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage
+    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage
  }

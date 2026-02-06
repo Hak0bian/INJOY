@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import { useEffect } from "react"
 import {
   HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage,
-  EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, 
+  EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, 
 } from "./pages/Index"
 import { Layout, AuthProfileGuard } from "./components/index"
 import { useAppDispatch } from "./store/hooks"
@@ -46,6 +46,8 @@ const App = () => {
           <Route path="/user/:userId/posts/:postId" element={<UserPostsPage />} />
           <Route path="/saved-posts" element={<SavedPostsPage />} />
           <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />
         </Route>
       </Routes>
     </section>

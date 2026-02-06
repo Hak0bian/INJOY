@@ -52,8 +52,8 @@ export interface CommentsState {
 interface IUserPreview {
     _id: string;
     fullname: string;
-    profile: {
-        username: string;
+    profile?: {
+        username?: string;
         photo?: string;
     };
 }
@@ -70,6 +70,9 @@ export interface FollowersState {
 export interface IPostsState {
     posts: IPost[];
     feedPosts: IPost[],
+    recommendedPosts: IPost[]
+    recLoading: boolean,
+    recError: string | null,
     feedLoading: boolean,
     feedError: string | null,
     noMoreFeedPosts: boolean,
@@ -96,4 +99,7 @@ export interface UsersState {
     otherUser: IUser | null;
     loading: boolean;
     error: string | null;
+    searchResults: IUserPreview[];
+    searchLoading: boolean;
+    searchError: string | null;
 }

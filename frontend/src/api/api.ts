@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { IUser, IPost, ILikePostResponse } from "../types";
+import type { IUser, IPost, ILikePostResponse, IUserPreview } from "../types";
 import type { IRegisterPayload, ILoginPayload, IAuthResponse, IComment } from "../store/storeTypes"
 
 const BASE_URL = "http://localhost:5000/api";
@@ -60,6 +60,10 @@ export const API = {
         return instance.get<{ posts: IPost[] }>(`/posts/feed?skip=${skip}&limit=${limit}`).then(res => res.data);
     },
 
+    getRecommendedPosts: () => {
+        return instance.get<IPost[]>("/posts/recommended").then(res => res.data);
+    },
+
     likePost(postId: string) {
         return instance.post<ILikePostResponse>(`/posts/${postId}/like`).then(res => res.data);
     },
@@ -86,6 +90,10 @@ export const API = {
     getFollowCounts: async (userId: string) => {
         const res = await instance.get(`/user/${userId}/follow-counts`);
         return res.data;
+    },
+
+    searchUsers(query: string) {
+        return instance.get<{ users: IUserPreview[] }>(`/user/search?q=${query}`).then(res => res.data);
     },
 
     // Comments

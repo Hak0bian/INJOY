@@ -4,6 +4,28 @@ import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 
+router.get("/search", authMiddleware, async (req, res) => {
+    try {
+        const q = req.query.q?.trim();
+        if (!q) {
+            return res.json({ users: [] });
+        }
+
+        const users = await User.find({
+            $or: [
+                { fullname: { $regex: q, $options: "i" } },
+                { "profile.username": { $regex: q, $options: "i" } },
+            ],
+        })
+            .select("fullname profile")
+            .limit(10);
+
+        res.json({ users });
+    } catch (err) {
+        res.status(500).json({ message: "Search failed" });
+    }
+});
+
 router.get("/:id", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
@@ -27,7 +49,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
 
 router.post("/:id/follow", authMiddleware, async (req, res) => {
     const targetUser = await User.findById(req.params.id);
@@ -58,7 +79,6 @@ router.post("/:id/follow", authMiddleware, async (req, res) => {
     });
 });
 
-
 router.get("/:id/followers", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
@@ -77,7 +97,6 @@ router.get("/:id/followers", authMiddleware, async (req, res) => {
     }
 });
 
-
 router.get("/:id/following", authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
@@ -95,7 +114,6 @@ router.get("/:id/following", authMiddleware, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
-
 
 router.get("/:id/follow-counts", authMiddleware, async (req, res) => {
     try {
