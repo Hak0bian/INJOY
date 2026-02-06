@@ -74,3 +74,13 @@ export interface ILikePostResponse {
     liked: boolean;
     likes: string[]
 }
+
+export interface IUserPreview {
+    _id: string;
+    fullname: string;
+    profile?: {
+        username?: string;
+        photo?: string;
+        bio?: string;
+    };
+}

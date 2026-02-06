@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 import type { JSX } from "react";
 
@@ -9,6 +9,7 @@ interface Props {
 
 const AuthProfileGuard = ({ children, requireProfileCompleted = true }: Props) => {
     const { user, initialized } = useAppSelector(state => state.auth);
+    const { userId } = useParams<{ userId: string }>();
     const location = useLocation();
     if (!initialized) return null;
 
@@ -22,6 +23,10 @@ const AuthProfileGuard = ({ children, requireProfileCompleted = true }: Props) =
 
     if (!requireProfileCompleted && user.profileCompleted) {
         return <Navigate to="/my-profile" replace />;
+    }
+
+    if (user?._id === userId) {
+        <Navigate to="/my-profile" replace />
     }
 
     return children;

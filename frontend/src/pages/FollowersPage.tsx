@@ -35,8 +35,7 @@ const FollowersPage: React.FC<{ type: "followers" | "following" }> = ({ type }) 
   };
 
   if (loading) return <p className="text-center pt-10">Loading...</p>;
-  if (error) return <p className="text-center pt-10 text-red-500">{error}</p>;
-
+  
   return (
     <div className="py-12">
       <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
@@ -79,7 +78,7 @@ const FollowersPage: React.FC<{ type: "followers" | "following" }> = ({ type }) 
                 {currentUser?._id !== f._id && (
                   <button
                     onClick={() => handleFollow(f._id)}
-                    className={`w-20 h-7 rounded-md text-[14px] ${isFollowing ? "bg-secondary" : "bg-btn"}`}
+                    className={`w-25 h-7 rounded-md text-[13px] cursor-pointer ${isFollowing ? "bg-secondary" : "bg-btn"}`}
                   >
                     {isFollowing ? "Following" : "Follow"}
                   </button>

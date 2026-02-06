@@ -3,6 +3,7 @@ import multer from "multer";
 import Post from "../models/Post.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import Comment from "../models/Comment.js";
+import User from "../models/User.js";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
@@ -32,6 +33,65 @@ router.post(
         }
     }
 );
+
+// GET FEED POSTS
+router.get("/feed", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const skip = Number(req.query.skip) || 0;
+        const limit = Number(req.query.limit) || 10;
+
+        const me = await User.findById(userId).select("following");
+        if (!me) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        let posts = await Post.find({
+            user: { $in: me.following },
+        })
+            .populate("user", "fullname profile")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        posts = posts.filter(p => p.user !== null);
+
+        if (posts.length < limit) {
+            const excludeUsers = [...me.following, userId];
+
+            const recommended = await Post.find({
+                user: { $nin: excludeUsers },
+            })
+                .populate("user", "fullname profile")
+                .sort({ createdAt: -1 })
+                .limit(limit - posts.length);
+
+            const filteredRecommended = recommended.filter(
+                p => p.user !== null
+            );
+
+            posts = [...posts, ...filteredRecommended];
+        }
+
+        const postsWithCounts = await Promise.all(
+            posts.map(async post => {
+                const totalComments = await Comment.countDocuments({
+                    post: post._id,
+                });
+
+                return {
+                    ...post.toObject(),
+                    commentsCount: totalComments,
+                };
+            })
+        );
+
+        res.json({ posts: postsWithCounts });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 // Get single post by id
 router.get("/:id", authMiddleware, async (req, res) => {
@@ -130,5 +190,9 @@ router.post("/:id/like", authMiddleware, async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+
+
+
 
 export default router;

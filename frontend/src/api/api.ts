@@ -56,11 +56,13 @@ export const API = {
     deletePost(postId: string) {
         return instance.delete(`/posts/${postId}`).then(() => { });
     },
+    getFeedPosts(skip: number, limit: number) {
+        return instance.get<{ posts: IPost[] }>(`/posts/feed?skip=${skip}&limit=${limit}`).then(res => res.data);
+    },
 
     likePost(postId: string) {
         return instance.post<ILikePostResponse>(`/posts/${postId}/like`).then(res => res.data);
     },
-
 
     // Users 
     getUser(userId: string) {
@@ -98,5 +100,4 @@ export const API = {
     deleteComment(commentId: string) {
         return instance.delete<{ commentId: string; postId: string; totalComments: number }>(`/comments/${commentId}`).then(res => res.data);
     },
-
 };

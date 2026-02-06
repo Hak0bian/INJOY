@@ -10,6 +10,7 @@ import { updatePostText, deletePost, likePost } from "../../store/postSlice/post
 import CommentsPanel from "./CommentsPanel";
 import { toggleSavedPost } from "../../store/SavedSlice/SavedSlice";
 import profileImg from "../../assets/images/profile.jpg"
+import { followUser } from "../../store/usersSlice/usersThunk";
 
 
 const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) => {
@@ -24,6 +25,9 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
     const isOwnPost = authUserId === userId;
     const { savedItems } = useAppSelector((state) => state.saved);
     const saved = savedItems.some(item => item.postId === id && item.userId === userId);
+    const { user: currentUser } = useAppSelector(state => state.auth);
+    const isFollowing = currentUser?.following?.includes(userId);
+
 
     const handleSavePost = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -47,26 +51,43 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
         dispatch(deletePost(id));
     };
 
+    const handleFollow = (id: string) => {
+        if (id) {
+            dispatch(followUser(id));
+        }
+    };
+
 
     return (
-        <div className="my-10">
+        <div className="mt-5 mb-10">
             <div className="flex items-center justify-between mb-2">
-                <NavLink to={`/user/${userId}`}>
-                    <div className="flex items-center gap-2 text-[14px]">
-                        <img
-                            src={
-                                user.profile?.photo
-                                    ? `http://localhost:5000/${user.profile.photo.replace("\\", "/")}`
-                                    : profileImg
-                            }
-                            alt={user.fullname}
-                            className="w-8 h-8 rounded-full"
-                        />
-                        <p className="font-semibold text-white">
-                            {user.profile?.username || user.fullname}
-                        </p>
-                    </div>
-                </NavLink>
+                <div className="w-full flex items-center justify-between">
+                    <NavLink to={`/user/${userId}`}>
+                        <div className="flex items-center gap-2 text-[14px]">
+                            <img
+                                src={
+                                    user?.profile?.photo
+                                        ? `http://localhost:5000/${user.profile.photo.replace("\\", "/")}`
+                                        : profileImg
+                                }
+                                alt={user?.fullname}
+                                className="w-8 h-8 rounded-full object-cover"
+                            />
+                            <p className="font-semibold text-white">
+                                {user?.profile?.username || user?.fullname}
+                            </p>
+                        </div>
+                    </NavLink>
+                    {userId !== currentUser?._id && (
+                        <button
+                            onClick={() => handleFollow(userId)}
+                            className={`w-23 h-7 rounded-md text-[13px] cursor-pointer ${isFollowing ? "bg-secondary" : "bg-btn"}`}
+                        >
+                            {isFollowing ? "Following" : "Follow"}
+                        </button>
+                    )}
+                </div>
+
 
                 {isOwnPost && (
                     <button
@@ -132,7 +153,6 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                     </div>
                 )}
             </div>
-
             {commentsOpen && (
                 <CommentsPanel
                     postId={id}

@@ -1,11 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPost, deletePost, getUserPosts, likePost, updatePostText } from "./postThunk";
+import { createPost, deletePost, getFeedPosts, getUserPosts, likePost, updatePostText } from "./postThunk";
 import type { IPostsState } from "../storeTypes";
 import { addComment, deleteComment } from "../commentsSlice/commentsThunk";
 
 
 const initialState: IPostsState = {
     posts: [],
+    feedPosts: [],
+    feedLoading: false,
+    feedError: null,
+    noMoreFeedPosts: false,
     createPostLoading: false,
     createPostError: null,
     getUserPostsLoading: false,
@@ -57,22 +61,18 @@ const postSlice = createSlice({
             })
 
         builder
-        builder
             .addCase(addComment.fulfilled, (state, action) => {
                 const post = state.posts.find(p => p._id === action.meta.arg.postId);
                 if (post) {
                     post.commentsCount = action.payload.totalComments;
                 }
-            });
-
-        builder
+            })
             .addCase(deleteComment.fulfilled, (state, action) => {
                 const post = state.posts.find(p => p._id === action.payload.postId);
                 if (post) {
                     post.commentsCount = action.payload.totalComments;
                 }
             })
-
             .addCase(likePost.fulfilled, (state, action) => {
                 const { postId, liked, likes } = action.payload;
                 const post = state.posts.find(p => p._id === postId);
@@ -81,6 +81,30 @@ const postSlice = createSlice({
                 post.isLiked = liked;
                 post.likes = likes;
             })
+
+        builder
+            .addCase(getFeedPosts.fulfilled, (state, action) => {
+                state.feedLoading = false;
+                if (action.payload.length === 0) {
+                    state.noMoreFeedPosts = true;
+                    return;
+                }
+
+                const existingIds = new Set(state.feedPosts.map(p => p._id));
+                const uniquePosts = action.payload.filter(
+                    p => !existingIds.has(p._id)
+                );
+
+                state.feedPosts.push(...uniquePosts);
+            })
+            .addCase(getFeedPosts.pending, (state) => {
+                state.feedLoading = true;
+                state.feedError = null;
+            })
+            .addCase(getFeedPosts.rejected, (state, action) => {
+                state.feedLoading = false;
+                state.feedError = action.payload as string;
+            });
     },
 });
 

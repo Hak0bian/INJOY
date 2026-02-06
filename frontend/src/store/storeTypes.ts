@@ -32,7 +32,7 @@ export interface IComment {
     _id: string;
     text: string;
     createdAt: string;
-    parent?: string | null; 
+    parent?: string | null;
     replies?: IComment[];
     user: {
         _id: string;
@@ -69,6 +69,10 @@ export interface FollowersState {
 
 export interface IPostsState {
     posts: IPost[];
+    feedPosts: IPost[],
+    feedLoading: boolean,
+    feedError: string | null,
+    noMoreFeedPosts: boolean,
     createPostLoading: boolean;
     createPostError: string | null;
     getUserPostsLoading: boolean;

@@ -64,3 +64,16 @@ export const likePost = createAsyncThunk<{ postId: string; liked: boolean; likes
     }
   }
 );
+
+
+export const getFeedPosts = createAsyncThunk(
+  "post/getFeed",
+  async ({ skip, limit }: { skip: number; limit: number }, { rejectWithValue }) => {
+    try {
+      const res = await API.getFeedPosts(skip, limit);
+      return res.posts;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Feed failed");
+    }
+  }
+);

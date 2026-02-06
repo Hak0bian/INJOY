@@ -17,7 +17,7 @@ const SavedPostsPage = () => {
 
     if (loading) return <p className="text-center pt-10">Loading...</p>;
     if (error) return <p className="text-center pt-10 text-red-500">{error}</p>;
-    if (posts.length === 0) return <p className="text-center pt-10">No saved posts yet.</p>;
+    if (posts.length === 0) return <p className="text-center pt-10 text-graytext">No saved posts yet</p>;
 
     return (
         <div>

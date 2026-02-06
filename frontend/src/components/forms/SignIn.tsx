@@ -18,7 +18,7 @@ const SignIn = () => {
             .unwrap()
             .then(() => {
                 resetForm();
-                navigate("/my-profile", { replace: true });
+                navigate("/", { replace: true });
             })
             .catch((err: any) => console.log("Login error:", err));
     };

@@ -20,6 +20,9 @@ const UserProfile = () => {
             dispatch(getUserById(userId));
             dispatch(getUserPosts(userId));
         }
+        if (currentUser?._id === userId) {
+            navigate('/my-profile')
+        }
     }, [userId]);
 
     const handleFollow = () => {
@@ -36,7 +39,7 @@ const UserProfile = () => {
                     <img
                         src={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : profile}
                         alt="profile"
-                        className="w-20 h-20 rounded-full"
+                        className="w-20 h-20 rounded-full object-cover"
                     />
                     <div>
                         <h3 className="pl-4 text-[14px] font-semibold">{otherUser?.fullname}</h3>
