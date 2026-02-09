@@ -103,3 +103,48 @@ export interface UsersState {
     searchLoading: boolean;
     searchError: string | null;
 }
+
+export interface Message {
+    _id: string;
+    conversationId: string;
+    sender: string;
+    text: string;
+    createdAt: string;
+}
+
+export interface MessageState {
+    messages: Message[];
+    loading: boolean;
+    error: string | null;
+    activeConversationId: string | null;
+}
+
+
+export interface Participant {
+    _id: string;
+    fullname: string;
+    profile: {
+        username?: string;
+        photo?: string;
+        bio?: string;
+    }
+};
+
+export interface Conversation {
+    _id: string;
+    participants: Participant[];
+    lastMessage: {
+        text: string;
+        sender: Participant;
+        createdAt: string;
+    } | null;
+    updatedAt: string;
+}
+
+export interface ConversationState {
+    conversations: Conversation[];
+    currentConversation: any | null;
+    loading: boolean;
+    error: string | null;
+    activeConversationId: string | null;
+}

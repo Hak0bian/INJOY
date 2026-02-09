@@ -13,7 +13,10 @@ import SavedPostsPage from "./save/SavedPostsPage";
 import SavedPostDetailPage from "./save/SavedPostDetailPage";
 import SearchPage from "./search/SearchPage";
 import SearchPostsPage from "./search/SearchPostsPage";
+import ChatPage from "./message/ChatPage";
+import ConversationsPage from "./message/ConversationsPage";
 
 export { SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
-    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage
+    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage,
+    ChatPage, ConversationsPage
  }

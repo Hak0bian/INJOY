@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getRecommendedPosts } from "../../store/postSlice/postThunk";
 import { searchUsers } from "../../store/usersSlice/usersThunk";
 import { IoCloseOutline } from "react-icons/io5";
+import { FaArrowLeft } from "react-icons/fa6";
 import profileImg from "../../assets/images/profile.jpg";
 
 const SearchPage = () => {
@@ -13,16 +14,21 @@ const SearchPage = () => {
     const { searchResults, searchLoading } = useAppSelector(state => state.users);
     const [query, setQuery] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
     useEffect(() => {
         if (!query.trim()) {
             setDropdownOpen(false);
+            setHasSearched(false);
             return;
         }
 
         setDropdownOpen(true);
+        setHasSearched(false);
+
         const timer = setTimeout(() => {
             dispatch(searchUsers(query));
+            setHasSearched(true);
         }, 1000);
 
         return () => clearTimeout(timer);
@@ -49,7 +55,10 @@ const SearchPage = () => {
         <div className="px-2 pt-5">
             <div className="relative">
                 <div className="sticky top-0 z-10 bg-main pb-5">
-                    <div className="relative flex items-center">
+                    <div className="relative flex items-center gap-1">
+                        <button onClick={() => navigate(-1)} className="cursor-pointer px-1">
+                            <FaArrowLeft />
+                        </button>
                         <input
                             value={query}
                             onChange={handleInputChange}
@@ -69,8 +78,12 @@ const SearchPage = () => {
 
                     {dropdownOpen && (
                         <div className="absolute left-0 right-0 z-10 min-h-screen bg-main border-b-2 mt-2">
-                            {searchLoading && <p className="p-3 text-graytext text-sm">Searching...</p>}
-                            {!searchLoading && searchResults.length === 0 && (<p className="p-2 text-graytext text-sm">No users found</p>)}
+                            {searchLoading && (
+                                <p className="p-3 text-graytext text-sm">Searching...</p>
+                            )}
+                            {!searchLoading && hasSearched && searchResults.length === 0 && (
+                                <p className="p-2 text-graytext text-sm">No users found</p>
+                            )}
 
                             {!searchLoading &&
                                 searchResults.map(user => (
@@ -105,7 +118,7 @@ const SearchPage = () => {
                 {recommendedPosts.map(post => (
                     <div
                         key={post._id}
-                        className="aspect-4/5 w-full overflow-hidden bg-black cursor-pointer"
+                        className="aspect-4/5 w-full overflow-hidden cursor-pointer"
                         onClick={() => handlePostClick(post._id)}
                     >
                         {post.image && (

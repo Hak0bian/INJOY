@@ -1,12 +1,14 @@
 import { Route, Routes } from "react-router-dom"
 import { useEffect } from "react"
 import {
-  HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage,
-  EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, 
+  HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
+  UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage
 } from "./pages/Index"
 import { Layout, AuthProfileGuard } from "./components/index"
 import { useAppDispatch } from "./store/hooks"
 import { loadUserFromToken } from "./store/profileSlice/profileThunk"
+import socket from "./socket/socket";
+import { updateLastMessage } from "./store/conversationSlice/conversationSlice"
 
 
 const App = () => {
@@ -15,6 +17,27 @@ const App = () => {
   useEffect(() => {
     dispatch(loadUserFromToken());
   }, [dispatch]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      socket.auth = { token };
+      socket.connect();
+
+      socket.on("newMessage", (msg) => {
+        dispatch(updateLastMessage({
+          conversationId: msg.conversationId,
+          text: msg.text,
+          sender: msg.sender,
+        }));
+      });
+    }
+
+    return () => {
+      socket.off("newMessage");
+    };
+  }, []);
 
 
   return (
@@ -48,6 +71,8 @@ const App = () => {
           <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />
+          <Route path="/messages" element={<ConversationsPage />} />
+          <Route path="/messages/:conversationId" element={<ChatPage />} />
         </Route>
       </Routes>
     </section>

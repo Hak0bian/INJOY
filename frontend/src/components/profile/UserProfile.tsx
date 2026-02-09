@@ -4,6 +4,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import profile from '../../assets/images/profile.jpg';
 import { getUserPosts } from '../../store/postSlice/postThunk';
 import { followUser, getUserById } from '../../store/usersSlice/usersThunk';
+import { setActiveConversation } from '../../store/messageSlice/messageSlice';
+import { createConversation } from '../../store/messageSlice/messageThunks';
 
 
 const UserProfile = () => {
@@ -30,6 +32,14 @@ const UserProfile = () => {
             dispatch(followUser(otherUser._id));
         }
     };
+
+    const handleMessage = async () => {
+        if (!userId) return;
+        const conversation = await dispatch(createConversation(userId)).unwrap();
+        dispatch(setActiveConversation(conversation._id));
+        navigate(`/messages/${conversation._id}`);
+    };
+
 
     return (
         <div className="pt-10 pb-30 px-5">
@@ -73,7 +83,12 @@ const UserProfile = () => {
                         >
                             {isFollowing ? 'Following' : 'Follow'}
                         </button>
-                        <button className="w-full h-10 bg-secondary rounded-full cursor-pointer">Message</button>
+                        <button
+                            onClick={handleMessage}
+                            className="w-full h-10 bg-secondary rounded-full cursor-pointer"
+                        >
+                            Message
+                        </button>
                     </div>
                 )}
             </div>
@@ -85,7 +100,7 @@ const UserProfile = () => {
                 ) : (
                     <div className="grid grid-cols-3 gap-1">
                         {posts.map(post => (
-                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden">
                                 {post.image && (
                                     <img
                                         src={`http://localhost:5000/${post.image}`}

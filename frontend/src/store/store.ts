@@ -5,6 +5,8 @@ import usersReducer from "./usersSlice/usersSlice"
 import followersReducer from "./followSlice/followersSlice"
 import commentsReducer from "./commentsSlice/commentsSlice"
 import savedReducer from "./SavedSlice/SavedSlice"
+import messageReducer from "./messageSlice/messageSlice";
+import conversationReducer from "./conversationSlice/conversationSlice";
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +16,9 @@ export const store = configureStore({
         followers: followersReducer,
         comments: commentsReducer,
         saved: savedReducer, 
+        messages: messageReducer,
+        conversations: conversationReducer,
+        
     },
 });
 

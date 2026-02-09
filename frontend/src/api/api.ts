@@ -108,4 +108,33 @@ export const API = {
     deleteComment(commentId: string) {
         return instance.delete<{ commentId: string; postId: string; totalComments: number }>(`/comments/${commentId}`).then(res => res.data);
     },
+
+    // Messages
+    getMessages(conversationId: string) {
+        return instance.get(`/messages/${conversationId}`)
+    },
+
+    createConversation(receiverId: string) {
+        return instance.post("/messages/conversation", { receiverId })
+    },
+
+    getAllConversations() {
+        return instance.get("/conversations")
+    },
+
+    getConversation(conversationId: string) {
+        return instance.get(`/conversations/${conversationId}`);
+    },
+
+    deleteConversation(conversationId: string) {
+        return instance.delete(`/conversations/${conversationId}`);
+    },
+
+    deleteMessage(messageId: string) {
+        return instance.delete(`/messages/${messageId}`)
+    },
+    
+
+
 };
+

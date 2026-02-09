@@ -34,11 +34,10 @@ const HomePage = () => {
                 <Friends following={following} />
             )}
 
-            {feedPosts.map(post => (
+            {feedPosts.map((post, index) => (
                 post.user && (
-                  <div className="px-5">
+                  <div key={`${post._id}-${index}`} className="px-5">
                     <Post
-                        key={post._id}
                         id={post._id}
                         user={post.user}
                         userId={post.user._id}

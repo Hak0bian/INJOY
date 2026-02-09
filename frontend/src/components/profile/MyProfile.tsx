@@ -81,7 +81,7 @@ const MyProfile = () => {
                 ) : (
                     <div className="grid grid-cols-3 gap-1">
                         {posts.map((post) => (
-                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden bg-black">
+                            <div key={post._id} className="aspect-4/5 w-full overflow-hidden">
                                 {post.image && (
                                     <img
                                         src={`http://localhost:5000/${post.image}`}
