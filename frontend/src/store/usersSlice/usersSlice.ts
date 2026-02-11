@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { followUser, getUserById, searchUsers } from "./usersThunk";
 import type { UsersState } from "../storeTypes";
 
@@ -9,14 +9,25 @@ const initialState: UsersState = {
   error: null,
   searchResults: [],
   searchLoading: false,
-  searchError: null
-
+  searchError: null,
+  onlineUsers: []
 };
 
 const userSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    addOnlineUser: (state, action: PayloadAction<string>) => {
+      if (!state.onlineUsers.includes(action.payload)) {
+        state.onlineUsers.push(action.payload);
+      }
+    },
+    removeOnlineUser: (state, action: PayloadAction<string>) => {
+      state.onlineUsers = state.onlineUsers.filter(
+        id => id !== action.payload
+      );
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(followUser.fulfilled, (state, action) => {
@@ -67,3 +78,4 @@ const userSlice = createSlice({
 })
 
 export default userSlice.reducer;
+export const { addOnlineUser, removeOnlineUser } = userSlice.actions;

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { deleteMessage, getMessages } from "./messageThunks";
-import type { MessageState, Message } from "../storeTypes";
+import type { MessageState, IMessage } from "../storeTypes";
 
 
 const initialState: MessageState = {
@@ -19,8 +19,26 @@ const messageSlice = createSlice({
             state.messages = [];
         },
 
-        addMessage(state, action: PayloadAction<Message>) {
+        addMessage(state, action: PayloadAction<IMessage>) {
             state.messages.push(action.payload);
+        },
+
+        markSeen: (state, action: PayloadAction<{ conversationId: string; userId: string }>) => {
+            const { conversationId, userId } = action.payload;
+
+            state.messages = state.messages.map((msg) => {
+                if (msg.conversationId !== conversationId) return msg;
+                if (msg.seenBy?.includes(userId)) return msg;
+
+                return {
+                    ...msg,
+                    seenBy: [...(msg.seenBy || []), userId],
+                };
+            });
+        },
+
+        deleteMessageLocal(state, action: PayloadAction<string>) {
+            state.messages = state.messages.filter(m => m._id !== action.payload);
         },
 
         clearMessages(state) {
@@ -49,7 +67,7 @@ const messageSlice = createSlice({
     },
 });
 
-export const { setActiveConversation, addMessage, clearMessages } =
+export const { setActiveConversation, addMessage, markSeen, deleteMessageLocal, clearMessages } =
     messageSlice.actions;
 
 export default messageSlice.reducer;

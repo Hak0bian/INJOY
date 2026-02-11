@@ -16,6 +16,12 @@ const SearchPage = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
+    const { onlineUsers } = useAppSelector((state) => state.users);
+    const isOnline = searchResults?.map(res => {
+        onlineUsers.includes(res?._id)
+    })
+
+
     useEffect(() => {
         if (!query.trim()) {
             setDropdownOpen(false);
@@ -93,14 +99,19 @@ const SearchPage = () => {
                                         className="flex items-center gap-3 py-2 hover:bg-secondary cursor-pointer"
                                         onClick={() => setDropdownOpen(false)}
                                     >
-                                        <img
-                                            className="w-8 h-8 rounded-full object-cover"
-                                            src={
-                                                user.profile?.photo
-                                                    ? `http://localhost:5000/${user.profile.photo}`
-                                                    : profileImg
-                                            }
-                                        />
+                                        <div className="relative">
+                                            <img
+                                                className="w-8 h-8 rounded-full object-cover"
+                                                src={
+                                                    user.profile?.photo
+                                                        ? `http://localhost:5000/${user.profile.photo}`
+                                                        : profileImg
+                                                }
+                                            />
+                                            {isOnline && (
+                                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-main" />
+                                            )}
+                                        </div>
                                         <span>{user.profile?.username || user.fullname}</span>
                                     </NavLink>
                                 ))}

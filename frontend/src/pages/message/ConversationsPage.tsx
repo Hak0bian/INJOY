@@ -16,7 +16,6 @@ const ConversationsPage = () => {
         dispatch(getConversations());
     }, []);
 
-
     return (
         <div className="overflow-y-auto pt-12">
 
@@ -32,13 +31,17 @@ const ConversationsPage = () => {
             {conversations
                 .filter(c => c.lastMessage)
                 .map((c) => {
-                    const otherUser = c.participants.find((p) => p._id !== currentUser?._id);
+                    const otherUser = c.participants.find((p) => p._id !== currentUser?._id );
+                    if (!otherUser) return null;
+
                     return (
                         <ConversationItem
                             key={c._id}
+                            id={otherUser?._id}
                             username={otherUser?.profile?.username || otherUser?.fullname!}
                             photo={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : undefined}
-                            lastMessage={c.lastMessage?.text}
+                            lastMessage={c?.lastMessage}
+                            createdAt={c?.lastMessage?.createdAt}
                             onClick={() => navigate(`/messages/${c._id}`)}
                             onDelete={() => dispatch(deleteConversationById(c._id))}
                         />

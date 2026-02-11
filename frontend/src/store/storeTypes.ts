@@ -102,23 +102,18 @@ export interface UsersState {
     searchResults: IUserPreview[];
     searchLoading: boolean;
     searchError: string | null;
+    onlineUsers: string[]
 }
 
-export interface Message {
+export interface IMessage {
     _id: string;
     conversationId: string;
     sender: string;
     text: string;
     createdAt: string;
+    seenBy: string[];
+    updatedAt: string;
 }
-
-export interface MessageState {
-    messages: Message[];
-    loading: boolean;
-    error: string | null;
-    activeConversationId: string | null;
-}
-
 
 export interface Participant {
     _id: string;
@@ -130,21 +125,34 @@ export interface Participant {
     }
 };
 
-export interface Conversation {
-    _id: string;
-    participants: Participant[];
-    lastMessage: {
-        text: string;
-        sender: Participant;
-        createdAt: string;
-    } | null;
-    updatedAt: string;
+export interface ILastMessage {
+  _id: string;
+  text: string;
+  sender: string;
+  conversationId: string;
+  seenBy: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IConversation {
+  _id: string;
+  participants: Participant[];
+  lastMessage?: ILastMessage;
+  updatedAt: string;
+}
+
+export interface MessageState {
+  messages: ILastMessage[];
+  loading: boolean;
+  error: string | null;
+  activeConversationId: string | null;
 }
 
 export interface ConversationState {
-    conversations: Conversation[];
-    currentConversation: any | null;
-    loading: boolean;
-    error: string | null;
-    activeConversationId: string | null;
+  conversations: IConversation[];
+  currentConversation: IConversation | null;
+  loading: boolean;
+  error: string | null;
+  activeConversationId: string | null;
 }

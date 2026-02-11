@@ -1,3 +1,5 @@
+import type { ILastMessage } from "./store/storeTypes";
+
 interface IProfile {
     username: string,
     photo?: string,
@@ -83,4 +85,15 @@ export interface IUserPreview {
         photo?: string;
         bio?: string;
     };
+}
+
+export interface IConversationItemProps {
+    id: string;
+    username: string;
+    photo?: string;
+    lastMessage?: ILastMessage;
+    createdAt: string | undefined;
+    isActive?: boolean;
+    onClick: () => void;
+    onDelete: () => void;
 }

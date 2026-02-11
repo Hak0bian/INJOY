@@ -26,12 +26,9 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
-
-// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/user", usersRoutes);
@@ -40,16 +37,20 @@ app.use("/api/comments", commentsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/conversations", conversationsRoutes);
 
-// HTTP + Socket.IO
-const server = http.createServer(app);
 
+const server = http.createServer(app);
 const io = new Server(server, {
-    cors: { origin: "http://localhost:5173", credentials: true },
+    cors: {
+        origin: "*",
+        credentials: true,
+    },
 });
 
-// Socket Authentication
+app.set("io", io); 
+const onlineUsers = new Map();
+
 io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
+    const token = socket.handshake.auth?.token;
     if (!token) return next(new Error("Unauthorized"));
 
     try {
@@ -61,35 +62,78 @@ io.use((socket, next) => {
     }
 });
 
-// Socket Events
+
 io.on("connection", (socket) => {
-    console.log("User connected:", socket.user.id);
+    const userId = socket.user.id;
+
+    if (!onlineUsers.has(userId)) {
+        onlineUsers.set(userId, new Set());
+    }
+
+    onlineUsers.get(userId).add(socket.id);
+    io.emit("userOnline", userId);
+    socket.emit("onlineUsers", Array.from(onlineUsers.keys()));
 
     socket.on("joinConversation", (conversationId) => {
         socket.join(conversationId);
     });
 
+    socket.on("markSeen", async (conversationId) => {
+        try {
+            await Message.updateMany(
+                {
+                    conversationId,
+                    seenBy: { $ne: socket.user.id },
+                },
+                {
+                    $push: { seenBy: socket.user.id },
+                }
+            );
+
+            socket.to(conversationId).emit("messagesSeen", {
+                conversationId,
+                userId: socket.user.id,
+            });
+        } catch (err) {
+            console.error("markSeen error:", err);
+        }
+    });
+
     socket.on("sendMessage", async ({ conversationId, text }) => {
-        const newMessage = await Message.create({
-            conversationId,
-            sender: socket.user.id,
-            text,
-            seenBy: [socket.user.id],
-        });
+        try {
+            if (!conversationId || !text?.trim()) return;
 
-        await Conversation.findByIdAndUpdate(conversationId, {
-            lastMessage: newMessage._id,
-        });
+            const newMessage = await Message.create({
+                conversationId,
+                sender: userId,
+                text,
+                seenBy: [userId],
+            });
 
-        io.to(conversationId).emit("newMessage", newMessage);
+            await Conversation.findByIdAndUpdate(conversationId, {
+                lastMessage: newMessage._id,
+                updatedAt: new Date(),
+            });
+
+            io.to(conversationId).emit("newMessage", newMessage);
+        } catch (err) {
+            console.error("Send message error:", err.message);
+        }
     });
 
     socket.on("disconnect", () => {
-        console.log("User disconnected");
+        const userSockets = onlineUsers.get(userId);
+        if (!userSockets) return;
+
+        userSockets.delete(socket.id);
+        if (userSockets.size === 0) {
+            onlineUsers.delete(userId);
+            io.emit("userOffline", userId);
+        }
     });
 });
 
-// Start server
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

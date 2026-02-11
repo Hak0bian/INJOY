@@ -9,6 +9,7 @@ import { useAppDispatch } from "./store/hooks"
 import { loadUserFromToken } from "./store/profileSlice/profileThunk"
 import socket from "./socket/socket";
 import { updateLastMessage } from "./store/conversationSlice/conversationSlice"
+import type { ILastMessage } from "./store/storeTypes"
 
 
 const App = () => {
@@ -20,25 +21,68 @@ const App = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (!token) return;
 
-    if (token) {
-      socket.auth = { token };
-      socket.connect();
+    socket.auth = { token };
+    socket.connect();
 
-      socket.on("newMessage", (msg) => {
-        dispatch(updateLastMessage({
-          conversationId: msg.conversationId,
-          text: msg.text,
-          sender: msg.sender,
-        }));
+    socket.on("newMessage", (msg: ILastMessage) => {
+      const newMsg: ILastMessage = {
+        ...msg,
+        updatedAt: msg.updatedAt || msg.createdAt,
+      };
+
+      dispatch(updateLastMessage({
+        conversationId: msg.conversationId,
+        message: newMsg
+      }));
+
+      dispatch({ type: "messages/addMessage", payload: newMsg });
+    });
+
+    socket.on("onlineUsers", (users: string[]) => {
+      users.forEach((userId) => {
+        dispatch({ type: "users/addOnlineUser", payload: userId });
       });
-    }
+    });
+
+    socket.on("userDisconnected", (userId: string) => {
+      dispatch({ type: "users/removeOnlineUser", payload: userId });
+    });
+
+    socket.on("messagesSeen", ({ conversationId, userId }) => {
+      dispatch({
+        type: "messages/markSeen",
+        payload: { conversationId, userId },
+      });
+
+      dispatch({
+        type: "conversations/markConversationSeen",
+        payload: { conversationId, userId },
+      });
+    });
+
+    socket.on("messageDeleted", ({ messageId, conversationId }) => {
+      dispatch({
+        type: "messages/deleteMessageLocal",
+        payload: messageId,
+      });
+
+      dispatch({
+        type: "conversations/removeLastIfDeleted",
+        payload: { messageId, conversationId },
+      });
+    });
 
     return () => {
       socket.off("newMessage");
+      socket.off("onlineUsers");
+      socket.off("userOffline");
+      socket.off("messagesSeen");
+      socket.off("messageDeleted");
+      socket.disconnect();
     };
-  }, []);
-
+  }, [dispatch]);
 
   return (
     <section className="min-h-screen bg-main text-maintext pb-20 select-none">
@@ -50,14 +94,12 @@ const App = () => {
           <AuthProfileGuard requireProfileCompleted={false}>
             <ProfileSetupPage />
           </AuthProfileGuard>
-        }
-        />
+        } />
         <Route path="/" element={
           <AuthProfileGuard>
             <Layout />
           </AuthProfileGuard>
-        }
-        >
+        }>
           <Route index element={<HomePage />} />
           <Route path="/my-profile" element={<ProfilePage />} />
           <Route path="/edit-profile" element={<EditProfilePage />} />
@@ -67,7 +109,6 @@ const App = () => {
           <Route path="/add-post" element={<AddPostPage />} />
           <Route path="/saved-posts" element={<SavedPostsPage />} />
           <Route path="/user/:userId/posts/:postId" element={<UserPostsPage />} />
-          <Route path="/saved-posts" element={<SavedPostsPage />} />
           <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />

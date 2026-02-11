@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { deleteConversationById, getConversationById, getConversations } from "./conversationThunks";
-import type { Conversation, ConversationState, Participant } from "../storeTypes";
+import type { IConversation, ConversationState, ILastMessage } from "../storeTypes";
 
 
 const initialState: ConversationState = {
@@ -18,8 +18,7 @@ const conversationSlice = createSlice({
         setActiveConversation(state, action: PayloadAction<string>) {
             state.activeConversationId = action.payload;
         },
-
-        addConversation(state, action: PayloadAction<Conversation>) {
+        addConversation(state, action: PayloadAction<IConversation>) {
             const exists = state.conversations.find(
                 (c) => c._id === action.payload._id
             );
@@ -27,27 +26,36 @@ const conversationSlice = createSlice({
                 state.conversations.unshift(action.payload);
             }
         },
-
-        updateLastMessage(
-            state,
-            action: PayloadAction<{ conversationId: string; text: string; sender: Participant }>
-        ) {
-            const convo = state.conversations.find(
-                (c) => c._id === action.payload.conversationId
-            );
+        updateLastMessage(state, action: PayloadAction<{ conversationId: string; message: ILastMessage }>) {
+            const convo = state.conversations.find(c => c._id === action.payload.conversationId);
             if (convo) {
-                convo.lastMessage = {
-                    text: action.payload.text,
-                    sender: action.payload.sender,
-                    createdAt: new Date().toISOString(),
-                };
+                convo.lastMessage = action.payload.message;
                 state.conversations = [
                     convo,
-                    ...state.conversations.filter((c) => c._id !== convo._id),
+                    ...state.conversations.filter(c => c._id !== convo._id),
                 ];
             }
         },
+        markConversationSeen(state, action: PayloadAction<{ conversationId: string; userId: string }>) {
+            const { conversationId, userId } = action.payload;
+            const convo = state.conversations.find(c => c._id === conversationId);
+
+            if (!convo?.lastMessage) return;
+            if (!convo.lastMessage.seenBy.includes(userId)) {
+                convo.lastMessage.seenBy.push(userId);
+            }
+        },
+        removeLastIfDeleted(state, action: PayloadAction<{ messageId: string; conversationId: string }>) {
+            const { conversationId, messageId } = action.payload;
+            const convo = state.conversations.find(c => c._id === conversationId);
+
+            if (!convo?.lastMessage) return;
+            if (convo.lastMessage._id === messageId) {
+                convo.lastMessage = undefined;
+            }
+        }
     },
+
     extraReducers: (builder) => {
         builder
             .addCase(getConversations.pending, (state) => {
@@ -85,9 +93,8 @@ const conversationSlice = createSlice({
                     state.currentConversation = null;
                 }
             });
-
     },
 });
 
-export const { setActiveConversation, addConversation, updateLastMessage } = conversationSlice.actions;
+export const { setActiveConversation, addConversation, updateLastMessage, markConversationSeen, removeLastIfDeleted } = conversationSlice.actions;
 export default conversationSlice.reducer;

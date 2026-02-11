@@ -4,6 +4,7 @@ import { getFeedPosts } from "../store/postSlice/postThunk";
 import Post from "../components/post/Post";
 import Friends from "../components/Friends";
 import { getFollowing } from "../store/followSlice/followersThunk";
+import { loadUserFromToken } from "../store/profileSlice/profileThunk";
 
 const HomePage = () => {
     const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ const HomePage = () => {
     const limit = 10;
 
     useEffect(() => {
+        dispatch(loadUserFromToken());
         dispatch(getFeedPosts({ skip: 0, limit }));
         if(requestId){
           dispatch(getFollowing(requestId));
