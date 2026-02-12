@@ -147,6 +147,7 @@ export interface MessageState {
   loading: boolean;
   error: string | null;
   activeConversationId: string | null;
+  toastMessage: any | null
 }
 
 export interface ConversationState {
@@ -154,5 +155,4 @@ export interface ConversationState {
   currentConversation: IConversation | null;
   loading: boolean;
   error: string | null;
-  activeConversationId: string | null;
 }

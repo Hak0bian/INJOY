@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deleteConversationById, getConversations } from "../../store/conversationSlice/conversationThunks";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ConversationItem from "../../components/message/ConversationItem";
 import { FaArrowLeft } from "react-icons/fa6";
+import { hideToast } from "../../store/messageSlice/messageSlice";
 
 
 const ConversationsPage = () => {
@@ -11,10 +12,15 @@ const ConversationsPage = () => {
     const navigate = useNavigate();
     const { conversations, loading } = useAppSelector((state) => state.conversations);
     const { user: currentUser } = useAppSelector((state) => state.auth);
+    const { conversationId } = useParams<{ conversationId: string }>();
 
     useEffect(() => {
         dispatch(getConversations());
     }, []);
+
+    useEffect(() => {
+        dispatch(hideToast());
+    }, [conversationId]);
 
     return (
         <div className="overflow-y-auto pt-12">
@@ -31,7 +37,7 @@ const ConversationsPage = () => {
             {conversations
                 .filter(c => c.lastMessage)
                 .map((c) => {
-                    const otherUser = c.participants.find((p) => p._id !== currentUser?._id );
+                    const otherUser = c.participants.find((p) => p._id !== currentUser?._id);
                     if (!otherUser) return null;
 
                     return (

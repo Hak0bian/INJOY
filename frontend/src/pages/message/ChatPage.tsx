@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deleteMessage, getMessages } from "../../store/messageSlice/messageThunks";
-import { setActiveConversation } from "../../store/messageSlice/messageSlice";
+import { hideToast, setActiveConversation } from "../../store/messageSlice/messageSlice";
 import { formatDistanceToNow, format, differenceInHours } from "date-fns";
 import { BiSend } from "react-icons/bi";
 import { getConversationById } from "../../store/conversationSlice/conversationThunks";
@@ -42,6 +42,28 @@ const ChatPage = () => {
     }, [messages]);
 
     useEffect(() => {
+        if (conversationId) {
+            dispatch(hideToast());
+        }
+    }, [conversationId]);
+
+    useEffect(() => {
+        if (!conversationId) return;
+
+        const handleNewMessage = (msg: any) => {
+            if (msg.conversationId === conversationId) {
+                dispatch({ type: "messages/addMessage", payload: msg });
+            }
+        };
+
+        socket.on("newMessage", handleNewMessage);
+
+        return () => {
+            socket.off("newMessage", handleNewMessage);
+        };
+    }, [conversationId]);
+
+    useEffect(() => {
         if (!conversationId) return;
         socket.emit("joinConversation", conversationId);
         dispatch({ type: "conversations/markConversationSeen", payload: { conversationId, userId: currentUser?._id } });
@@ -49,7 +71,6 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (!conversationId || messages.length === 0 || !currentUser) return;
-
         const lastMessage = messages[messages.length - 1];
         const isMine = lastMessage.sender === currentUser._id;
 
@@ -98,12 +119,12 @@ const ChatPage = () => {
             <div ref={containerRef} className="flex-1 flex flex-col gap-2 p-3 py-20 overflow-y-auto">
                 {loading && <p className="text-center text-graytext">Loading...</p>}
 
-                {messages.map(msg => {
+                {messages.map((msg, ind) => {
                     const isMine = msg.sender === currentUser?._id;
                     const isUnread = currentUser && !msg.seenBy.includes(currentUser._id) && !isMine;
 
                     return (
-                        <div key={msg._id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                        <div key={msg._id + ind} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                             <div className={`flex flex-col ${isMine ? "items-end" : "items-baseline"}`}>
                                 <p className="text-[10px] text-graytext mb-1">
                                     {(() => {
@@ -120,7 +141,7 @@ const ChatPage = () => {
                                     {isMine && (
                                         <button
                                             onClick={() => dispatch(deleteMessage(msg._id))}
-                                            className="text-graytext hover:text-red-500 text-[14px] cursor-pointer"
+                                            className="text-graytext hover:text-red-500 text-[12px] cursor-pointer"
                                         >
                                             <MdDelete />
                                         </button>

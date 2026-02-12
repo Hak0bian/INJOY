@@ -8,16 +8,12 @@ const initialState: ConversationState = {
     currentConversation: null,
     loading: false,
     error: null,
-    activeConversationId: null,
 };
 
 const conversationSlice = createSlice({
     name: "conversations",
     initialState,
     reducers: {
-        setActiveConversation(state, action: PayloadAction<string>) {
-            state.activeConversationId = action.payload;
-        },
         addConversation(state, action: PayloadAction<IConversation>) {
             const exists = state.conversations.find(
                 (c) => c._id === action.payload._id
@@ -96,5 +92,5 @@ const conversationSlice = createSlice({
     },
 });
 
-export const { setActiveConversation, addConversation, updateLastMessage, markConversationSeen, removeLastIfDeleted } = conversationSlice.actions;
+export const { addConversation, updateLastMessage, markConversationSeen, removeLastIfDeleted } = conversationSlice.actions;
 export default conversationSlice.reducer;

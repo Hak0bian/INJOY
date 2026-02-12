@@ -8,6 +8,7 @@ const initialState: MessageState = {
     loading: false,
     error: null,
     activeConversationId: null,
+    toastMessage: null
 };
 
 const messageSlice = createSlice({
@@ -18,11 +19,9 @@ const messageSlice = createSlice({
             state.activeConversationId = action.payload;
             state.messages = [];
         },
-
         addMessage(state, action: PayloadAction<IMessage>) {
             state.messages.push(action.payload);
         },
-
         markSeen: (state, action: PayloadAction<{ conversationId: string; userId: string }>) => {
             const { conversationId, userId } = action.payload;
 
@@ -36,14 +35,18 @@ const messageSlice = createSlice({
                 };
             });
         },
-
         deleteMessageLocal(state, action: PayloadAction<string>) {
             state.messages = state.messages.filter(m => m._id !== action.payload);
         },
-
         clearMessages(state) {
             state.messages = [];
         },
+        showToast: (state, action) => {
+            state.toastMessage = action.payload;
+        },
+        hideToast: (state) => {
+            state.toastMessage = null;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -67,7 +70,5 @@ const messageSlice = createSlice({
     },
 });
 
-export const { setActiveConversation, addMessage, markSeen, deleteMessageLocal, clearMessages } =
-    messageSlice.actions;
-
+export const { setActiveConversation, addMessage, markSeen, deleteMessageLocal, clearMessages, showToast, hideToast } = messageSlice.actions;
 export default messageSlice.reducer;

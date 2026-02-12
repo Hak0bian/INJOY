@@ -4,8 +4,8 @@ import {
   HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
   UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage
 } from "./pages/Index"
-import { Layout, AuthProfileGuard } from "./components/index"
-import { useAppDispatch } from "./store/hooks"
+import { Layout, AuthProfileGuard, MessageToast } from "./components/index"
+import { useAppDispatch, useAppSelector } from "./store/hooks"
 import { loadUserFromToken } from "./store/profileSlice/profileThunk"
 import socket from "./socket/socket";
 import { updateLastMessage } from "./store/conversationSlice/conversationSlice"
@@ -14,6 +14,8 @@ import type { ILastMessage } from "./store/storeTypes"
 
 const App = () => {
   const dispatch = useAppDispatch();
+  const { currentConversation } = useAppSelector(state => state.conversations)
+  const { toastMessage } = useAppSelector(state => state.messages)
 
   useEffect(() => {
     dispatch(loadUserFromToken());
@@ -27,17 +29,14 @@ const App = () => {
     socket.connect();
 
     socket.on("newMessage", (msg: ILastMessage) => {
-      const newMsg: ILastMessage = {
-        ...msg,
-        updatedAt: msg.updatedAt || msg.createdAt,
-      };
+      const newMsg: ILastMessage = {...msg, updatedAt: msg.updatedAt || msg.createdAt};
+      dispatch(updateLastMessage({ conversationId: msg.conversationId, message: newMsg } ));
 
-      dispatch(updateLastMessage({
-        conversationId: msg.conversationId,
-        message: newMsg
-      }));
-
-      dispatch({ type: "messages/addMessage", payload: newMsg });
+      if (msg.conversationId === currentConversation?._id) {
+        dispatch({ type: "messages/addMessage", payload: newMsg });
+      } else {
+        dispatch({ type: "messages/showToast", payload: newMsg });
+      }
     });
 
     socket.on("onlineUsers", (users: string[]) => {
@@ -51,41 +50,29 @@ const App = () => {
     });
 
     socket.on("messagesSeen", ({ conversationId, userId }) => {
-      dispatch({
-        type: "messages/markSeen",
-        payload: { conversationId, userId },
-      });
-
-      dispatch({
-        type: "conversations/markConversationSeen",
-        payload: { conversationId, userId },
-      });
+      dispatch({ type: "messages/markSeen", payload: { conversationId, userId } });
+      dispatch({ type: "conversations/markConversationSeen", payload: { conversationId, userId }});
     });
 
     socket.on("messageDeleted", ({ messageId, conversationId }) => {
-      dispatch({
-        type: "messages/deleteMessageLocal",
-        payload: messageId,
-      });
-
-      dispatch({
-        type: "conversations/removeLastIfDeleted",
-        payload: { messageId, conversationId },
-      });
+      dispatch({ type: "messages/deleteMessageLocal", payload: messageId });
+      dispatch({ type: "conversations/removeLastIfDeleted", payload: { messageId, conversationId }});
     });
 
     return () => {
       socket.off("newMessage");
       socket.off("onlineUsers");
-      socket.off("userOffline");
+      socket.off("userDisconnected");
       socket.off("messagesSeen");
       socket.off("messageDeleted");
       socket.disconnect();
     };
   }, [dispatch]);
+  
 
   return (
     <section className="min-h-screen bg-main text-maintext pb-20 select-none">
+      {toastMessage && <MessageToast message={toastMessage} />}
       <Routes>
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />

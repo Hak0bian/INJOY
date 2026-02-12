@@ -8,7 +8,8 @@ import { IoEyeOutline } from "react-icons/io5";
 import { TfiEmail } from "react-icons/tfi";
 import { LuLockKeyhole } from "react-icons/lu";
 import AuthProfileGuard from "./guards/AuthProfileGuard";
+import MessageToast from "../pages/message/MessageToast";
 
-export { SignIn, SignUp, ForgotPass, Layout, AuthProfileGuard,
-    IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole 
+export { SignIn, SignUp, ForgotPass, Layout, AuthProfileGuard, 
+    IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole, MessageToast
 }
