@@ -45,8 +45,8 @@ const CommentsPanel = ({ postId, onClose }: { postId: string; onClose: () => voi
 
                 <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
                     {loading && <p className="text-center">Loading...</p>}
-                    {!loading && comments.length === 0 && 
-                    <p className="text-[14px] text-center text-graytext pt-3">No comments yet</p>}
+                    {!loading && comments.length === 0 &&
+                        <p className="text-[14px] text-center text-graytext pt-3">No comments yet</p>}
                     {!loading && comments.map(c => (
                         <Comments key={c._id} comment={c} setReplyTo={setReplyTo} />
                     ))}
@@ -67,6 +67,12 @@ const CommentsPanel = ({ postId, onClose }: { postId: string; onClose: () => voi
                             onChange={(e) => setText(e.target.value)}
                             placeholder={replyTo ? "Reply..." : "Add a comment..."}
                             className="flex-1 bg-transparent outline-0"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleAdd();
+                                }
+                            }}
                         />
                         <button onClick={handleAdd} className="text-btn font-semibold text-[20px] cursor-pointer">
                             <BiSend />

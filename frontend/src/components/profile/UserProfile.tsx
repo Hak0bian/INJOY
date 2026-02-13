@@ -13,7 +13,7 @@ const UserProfile = () => {
     const dispatch = useAppDispatch();
     const { userId } = useParams<{ userId: string }>();
     const { otherUser } = useAppSelector(state => state.users);
-    const { posts } = useAppSelector(state => state.posts);
+    const { posts, getUserPostsLoading } = useAppSelector(state => state.posts);
     const { user: currentUser } = useAppSelector(state => state.auth);
     const isFollowing = otherUser?.isFollowing;
 
@@ -95,7 +95,8 @@ const UserProfile = () => {
 
             {/* Posts */}
             <div>
-                {posts.length === 0 ? (
+                {getUserPostsLoading && <p className='text-sm text-graytext text-center'>Loading...</p> }
+                {!getUserPostsLoading && posts.length === 0 ? (
                     <p className="text-center text-graytext border-t border-graytext pt-5">No posts yet</p>
                 ) : (
                     <div className="grid grid-cols-3 gap-1">

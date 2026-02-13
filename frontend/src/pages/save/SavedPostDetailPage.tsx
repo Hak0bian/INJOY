@@ -51,7 +51,7 @@ const SavedPostDetailPage = () => {
                     <div
                         key={post._id}
                         ref={(el) => { postRefs.current[post._id] = el }}
-                        className="px-5 mb-10"
+                        className="px-5 my-10"
                     >
                         <Post
                             id={post._id}

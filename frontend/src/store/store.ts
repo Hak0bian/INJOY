@@ -7,6 +7,8 @@ import commentsReducer from "./commentsSlice/commentsSlice"
 import savedReducer from "./SavedSlice/SavedSlice"
 import messageReducer from "./messageSlice/messageSlice";
 import conversationReducer from "./conversationSlice/conversationSlice";
+import notificationsReducer from "./notificationsSlice/notificationsSlice";
+
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +20,7 @@ export const store = configureStore({
         saved: savedReducer, 
         messages: messageReducer,
         conversations: conversationReducer,
+        notifications: notificationsReducer,
         
     },
 });

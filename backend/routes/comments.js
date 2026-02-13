@@ -2,6 +2,7 @@ import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import Comment from "../models/Comment.js";
 import Post from "../models/Post.js";
+import Notification from "../models/Notification.js";
 const router = express.Router();
 
 
@@ -31,6 +32,24 @@ router.post("/:postId", authMiddleware, async (req, res) => {
         text,
         parent: parent || null,
     });
+
+    const post = await Post.findById(req.params.postId);
+
+    const notification = await Notification.create({
+        recipient: post.user,
+        sender: req.user.id,
+        type: "comment",
+        post: post._id,
+        comment: comment._id,
+    });
+
+    const populatedNotification = await Notification.findById(notification._id)
+        .populate("sender", "_id fullname profile.username profile.photo")
+        .populate("post", "image")
+        .populate("comment", "text");
+
+    const io = req.app.get("io");
+    io.to(post.user.toString()).emit("newNotification", populatedNotification);
 
     await Post.findByIdAndUpdate(req.params.postId, {
         $inc: { commentsCount: 1 }

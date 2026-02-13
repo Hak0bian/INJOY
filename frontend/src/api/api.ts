@@ -133,8 +133,13 @@ export const API = {
     deleteMessage(messageId: string) {
         return instance.delete(`/messages/${messageId}`)
     },
-    
 
+    // Notifications
+    getNotifications() {
+        return instance.get("/notifications").then(res => res.data)
+    },
 
+    markNotificationsRead() {
+        return instance.patch("/notifications/read").then(res => res.data)
+    },
 };
-

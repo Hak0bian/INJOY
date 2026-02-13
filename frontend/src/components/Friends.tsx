@@ -6,7 +6,7 @@ const Friends = ({ following }: {following: IUserPreview[]}) => {
     if (!following || following.length === 0) return null;
 
     return (
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-3 pl-2">
+        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-3 pl-3">
             {following.map(user => (
                 <NavLink to={`/user/${user._id}`} key={user._id}>
                     <div className="text-[12px] w-12 overflow-hidden text-center">

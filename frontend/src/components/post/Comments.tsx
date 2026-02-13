@@ -20,7 +20,7 @@ const Comments = ({ comment, setReplyTo }: ICommentsProps) => {
             <div className="flex justify-between">
                 <div className="flex gap-2 cursor-pointer">
                     <img
-                        className="w-8 h-8 rounded-full mt-2"
+                        className="w-8 h-8 rounded-full mt-2 object-cover"
                         src={comment.user.profile?.photo
                             ? `http://localhost:5000/${comment.user.profile.photo}`
                             : profileImg} 
@@ -57,7 +57,7 @@ const Comments = ({ comment, setReplyTo }: ICommentsProps) => {
             </div>
 
             {comment.replies && comment.replies.length > 0 && (
-                <div className="ml-8">
+                <div className="flex flex-col gap-2 ml-8">
                     {comment.replies.map(r => (
                         <Comments key={r._id} comment={r} setReplyTo={setReplyTo} />
                     ))}

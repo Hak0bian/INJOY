@@ -4,6 +4,7 @@ import Post from "../models/Post.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import Comment from "../models/Comment.js";
 import User from "../models/User.js";
+import Notification from "../models/Notification.js";
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
@@ -46,7 +47,7 @@ router.get("/feed", authMiddleware, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        let posts = await Post.find({user: { $in: me.following }})
+        let posts = await Post.find({ user: { $in: me.following } })
             .populate("user", "fullname profile")
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -57,7 +58,7 @@ router.get("/feed", authMiddleware, async (req, res) => {
         if (posts.length < limit) {
             const excludeUsers = [...me.following, userId];
 
-            const recommended = await Post.find({user: { $nin: excludeUsers }})
+            const recommended = await Post.find({ user: { $nin: excludeUsers } })
                 .populate("user", "fullname profile")
                 .sort({ createdAt: -1 })
                 .limit(limit - posts.length);
@@ -68,7 +69,7 @@ router.get("/feed", authMiddleware, async (req, res) => {
 
         const postsWithCounts = await Promise.all(
             posts.map(async post => {
-                const totalComments = await Comment.countDocuments({post: post._id});
+                const totalComments = await Comment.countDocuments({ post: post._id });
 
                 return {
                     ...post.toObject(),
@@ -202,6 +203,20 @@ router.post("/:id/like", authMiddleware, async (req, res) => {
         }
 
         await post.save();
+
+        const notification = await Notification.create({
+            recipient: post.user,
+            sender: userId,
+            type: "like",
+            post: post._id,
+        });
+
+        const populatedNotification = await Notification.findById(notification._id)
+            .populate("sender", "_id fullname profile.username profile.photo")
+            .populate("post", "image");
+
+        const io = req.app.get("io");
+        io.to(post.user.toString()).emit("newNotification", populatedNotification);
 
         res.json({
             postId: post._id,

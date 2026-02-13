@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import { useEffect } from "react"
 import {
   HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
-  UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage
+  UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage, NotificationsPage
 } from "./pages/Index"
 import { Layout, AuthProfileGuard, MessageToast } from "./components/index"
 import { useAppDispatch, useAppSelector } from "./store/hooks"
@@ -10,7 +10,9 @@ import { loadUserFromToken } from "./store/profileSlice/profileThunk"
 import socket from "./socket/socket";
 import { updateLastMessage } from "./store/conversationSlice/conversationSlice"
 import type { ILastMessage } from "./store/storeTypes"
-
+import { addNotification } from "./store/notificationsSlice/notificationsSlice"
+import notificationsSound from './assets/sounds/notification.mp3'
+import { markAllAsRead } from "./store/notificationsSlice/notificationsThunk"
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -29,8 +31,8 @@ const App = () => {
     socket.connect();
 
     socket.on("newMessage", (msg: ILastMessage) => {
-      const newMsg: ILastMessage = {...msg, updatedAt: msg.updatedAt || msg.createdAt};
-      dispatch(updateLastMessage({ conversationId: msg.conversationId, message: newMsg } ));
+      const newMsg: ILastMessage = { ...msg, updatedAt: msg.updatedAt || msg.createdAt };
+      dispatch(updateLastMessage({ conversationId: msg.conversationId, message: newMsg }));
 
       if (msg.conversationId === currentConversation?._id) {
         dispatch({ type: "messages/addMessage", payload: newMsg });
@@ -51,12 +53,23 @@ const App = () => {
 
     socket.on("messagesSeen", ({ conversationId, userId }) => {
       dispatch({ type: "messages/markSeen", payload: { conversationId, userId } });
-      dispatch({ type: "conversations/markConversationSeen", payload: { conversationId, userId }});
+      dispatch({ type: "conversations/markConversationSeen", payload: { conversationId, userId } });
     });
 
     socket.on("messageDeleted", ({ messageId, conversationId }) => {
       dispatch({ type: "messages/deleteMessageLocal", payload: messageId });
-      dispatch({ type: "conversations/removeLastIfDeleted", payload: { messageId, conversationId }});
+      dispatch({ type: "conversations/removeLastIfDeleted", payload: { messageId, conversationId } });
+    });
+
+    socket.on("newNotification", async (notification) => {
+      if (location.pathname.includes("/notifications")) {
+        dispatch(addNotification({ ...notification, isRead: true }));
+        dispatch(markAllAsRead());
+      } else {
+        dispatch(addNotification(notification));
+        const audio = new Audio(notificationsSound);
+        audio.play().catch(() => { });
+      }
     });
 
     return () => {
@@ -65,10 +78,11 @@ const App = () => {
       socket.off("userDisconnected");
       socket.off("messagesSeen");
       socket.off("messageDeleted");
+      socket.off("newNotification");
       socket.disconnect();
     };
   }, [dispatch]);
-  
+
 
   return (
     <section className="min-h-screen bg-main text-maintext pb-20 select-none">
@@ -101,6 +115,7 @@ const App = () => {
           <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />
           <Route path="/messages" element={<ConversationsPage />} />
           <Route path="/messages/:conversationId" element={<ChatPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
       </Routes>
     </section>

@@ -4,7 +4,7 @@ import { hideToast } from "../../store/messageSlice/messageSlice";
 import { useEffect, useRef, useState } from "react";
 import { API } from "../../api/api";
 import profile from "../../assets/images/profile.jpg";
-import toastSoundFile from '../../assets/sounds/notification.mp3';
+import toastSoundFile from '../../assets/sounds/message.mp3';
 import { format } from "date-fns";
 
 

@@ -12,6 +12,7 @@ import postRoutes from "./routes/posts.js";
 import commentsRoutes from "./routes/comments.js";
 import messagesRoutes from "./routes/messages.js";
 import conversationsRoutes from "./routes/conversations.js";
+import notificationRoutes from "./routes/notifications.js";
 
 import http from "http";
 import { Server } from "socket.io";
@@ -36,6 +37,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/messages", messagesRoutes);
 app.use("/api/conversations", conversationsRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 
 const server = http.createServer(app);
@@ -46,7 +48,7 @@ const io = new Server(server, {
     },
 });
 
-app.set("io", io); 
+app.set("io", io);
 const onlineUsers = new Map();
 
 io.use((socket, next) => {
@@ -66,6 +68,9 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
     const userId = socket.user.id;
 
+    if (userId) {
+        socket.join(userId);
+    }
     if (!onlineUsers.has(userId)) {
         onlineUsers.set(userId, new Set());
     }
