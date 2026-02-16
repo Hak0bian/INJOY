@@ -65,10 +65,6 @@ const SignIn = () => {
                         <ErrorMessage name="password" component="div" className="text-xs text-red-500 tracking-wider mt-1" />
                     </div>
 
-                    <NavLink to="/forgot-pass" className="text-graytext mt-2 block text-[14px] hover:text-white duration-300">
-                        Forgot Password?
-                    </NavLink>
-
                     {error && <p className="text-xs text-red-500 text-center tracking-wider">{error}</p>}
 
                     <button

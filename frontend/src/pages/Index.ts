@@ -1,6 +1,5 @@
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
-import ForgotPassPage from "./auth/ForgotPassPage";
 import ProfileSetupPage from "./profile/ProfileSetupPage";
 import ProfilePage from "./profile/ProfilePage";
 import UserProfilePage from "./profile/UserProfilePage";
@@ -17,7 +16,7 @@ import ChatPage from "./message/ChatPage";
 import ConversationsPage from "./message/ConversationsPage";
 import NotificationsPage from "./NotificationsPage";
 
-export { SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
+export { SignInPage, SignUpPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
     EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage,
     ChatPage, ConversationsPage, NotificationsPage
  }

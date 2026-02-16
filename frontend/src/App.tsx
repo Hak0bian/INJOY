@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import { useEffect } from "react"
 import {
-  HomePage, SignInPage, SignUpPage, ForgotPassPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
+  HomePage, SignInPage, SignUpPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
   UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage, NotificationsPage
 } from "./pages/Index"
 import { Layout, AuthProfileGuard, MessageToast } from "./components/index"
@@ -90,7 +90,6 @@ const App = () => {
       <Routes>
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/forgot-pass" element={<ForgotPassPage />} />
         <Route path="/profile-setup" element={
           <AuthProfileGuard requireProfileCompleted={false}>
             <ProfileSetupPage />

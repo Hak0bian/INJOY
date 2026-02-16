@@ -67,7 +67,7 @@ const MessageToast = ({ message }: { message: any }) => {
             {shouldRender && senderInfo && (
                 <div
                     onClick={handleClick}
-                    className="fixed top-2 right-2 left-2 z-20 bg-secondary border border-btn rounded-2xl p-3 cursor-pointer animate-slideIn"
+                    className="fixed top-2 right-2 left-2 z-60 bg-secondary border border-btn rounded-2xl p-3 cursor-pointer animate-slideIn"
                 >
                     <div className="flex gap-2 items-center">
                         <img

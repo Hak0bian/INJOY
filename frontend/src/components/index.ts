@@ -1,6 +1,5 @@
 import SignIn from "./forms/SignIn";
 import SignUp from "./forms/SignUp";
-import ForgotPass from "./forms/ForgotPass";
 import Layout from "./Layout";
 
 import { IoEyeOffOutline } from "react-icons/io5";
@@ -10,6 +9,4 @@ import { LuLockKeyhole } from "react-icons/lu";
 import AuthProfileGuard from "./guards/AuthProfileGuard";
 import MessageToast from "./message/MessageToast";
 
-export { SignIn, SignUp, ForgotPass, Layout, AuthProfileGuard, 
-    IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole, MessageToast
-}
+export { SignIn, SignUp, Layout, AuthProfileGuard, IoEyeOffOutline, IoEyeOutline, TfiEmail, LuLockKeyhole, MessageToast }

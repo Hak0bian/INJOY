@@ -34,6 +34,7 @@ const authSlice = createSlice({
                 state.token = token;
                 state.user = JSON.parse(user);
             }
+            state.initialized = true;
         }
     },
     extraReducers: (builder) => {

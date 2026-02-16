@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useParams } from "react-router-dom"
 import { GrHomeRounded } from "react-icons/gr";
 import { FaCirclePlus } from "react-icons/fa6";
 import { LuMessagesSquare } from "react-icons/lu";
@@ -13,6 +13,8 @@ const BottomNavigation = () => {
     const dispatch = useAppDispatch()
     const { conversations } = useAppSelector((state) => state.conversations);
     const { user } = useAppSelector((state) => state.auth);
+    const params = useParams<{ conversationId: string }>();
+    const activeConversationId = params.conversationId;
 
     useEffect(() => {
         dispatch(getConversations());
@@ -23,11 +25,11 @@ const BottomNavigation = () => {
             const lastMsg = conv.lastMessage;
             if (!lastMsg) return false;
             const isMine = lastMsg.sender === user?._id;
-            const isSeen = user?._id && lastMsg.seenBy?.includes(user?._id);
+            const isSeen = user?._id && lastMsg.seenBy?.includes(user._id);
+            if (conv._id === activeConversationId) return false;
             return !isMine && !isSeen;
         }).length;
-    }, [conversations, user?._id]);
-
+    }, [conversations, user?._id, activeConversationId]);
 
     return (
         <div className="flex justify-between items-center px-5 py-2 fixed bottom-0 left-0 right-0 z-10 bg-main">

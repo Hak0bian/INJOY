@@ -76,7 +76,7 @@ const MyProfile = () => {
 
             {/* Posts */}
             <div>
-                {getUserPostsLoading && <p className='text-sm text-graytext text-center'>Loading...</p> }
+                {getUserPostsLoading && <p className='text-sm text-graytext text-center'>Loading...</p>}
                 {!getUserPostsLoading && posts.length === 0 ? (
                     <p className="text-center text-graytext border-t border-graytext pt-5">No posts yet</p>
                 ) : (
@@ -87,7 +87,13 @@ const MyProfile = () => {
                                     <img
                                         src={`http://localhost:5000/${post.image}`}
                                         className="w-full h-full object-cover cursor-pointer"
-                                        onClick={() => navigate(`/user/${user?._id}/posts/${post._id}`)}
+                                        onClick={() => {
+                                            if (userId) {
+                                                navigate(`/user/${userId}/posts/${post._id}`, {
+                                                    state: { userId }
+                                                })
+                                            }
+                                        }}
                                     />
                                 )}
                             </div>

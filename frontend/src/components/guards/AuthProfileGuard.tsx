@@ -26,7 +26,7 @@ const AuthProfileGuard = ({ children, requireProfileCompleted = true }: Props) =
     }
 
     if (user?._id === userId) {
-        <Navigate to="/my-profile" replace />
+        return <Navigate to="/" replace />
     }
 
     return children;
