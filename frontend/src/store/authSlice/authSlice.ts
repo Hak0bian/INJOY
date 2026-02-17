@@ -88,7 +88,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.token = null;
                 state.loading = false;
-                state.initialized = true;
+                state.initialized = false;
             })
 
         builder

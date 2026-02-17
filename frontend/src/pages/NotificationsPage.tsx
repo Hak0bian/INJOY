@@ -12,11 +12,11 @@ const NotificationsPage = () => {
     const { items, loading } = useAppSelector((state) => state.notifications);
 
     useEffect(() => {
-        const load = async () => {
-            await dispatch(getNotifications());
+        dispatch(getNotifications());
+
+        return () => {
             dispatch(markAllAsRead());
         };
-        load();
     }, [dispatch]);
 
     return (

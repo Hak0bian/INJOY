@@ -17,9 +17,13 @@ const HomePage = () => {
     const requestId = user?.id || user?._id;
     let skip = 0;
     const limit = 10;
+    
 
     useEffect(() => {
         dispatch(loadUserFromToken());
+    }, [dispatch]);
+
+    useEffect(() => {
         dispatch(getFeedPosts({ skip: 0, limit }));
         if (requestId) {
             dispatch(getFollowing(requestId));

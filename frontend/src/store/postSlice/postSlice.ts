@@ -78,11 +78,20 @@ const postSlice = createSlice({
             })
             .addCase(likePost.fulfilled, (state, action) => {
                 const { postId, liked, likes } = action.payload;
-                const post = state.posts.find(p => p._id === postId);
-                if (!post) return;
 
-                post.isLiked = liked;
-                post.likes = likes;
+                // FeedPosts-ում էլ թարմացնել
+                const feedPost = state.feedPosts.find(p => p._id === postId);
+                if (feedPost) {
+                    feedPost.isLiked = liked;
+                    feedPost.likes = likes;
+                }
+
+                // Posts-ում էլ (եթե ունենք այլ էջերից)
+                const post = state.posts.find(p => p._id === postId);
+                if (post) {
+                    post.isLiked = liked;
+                    post.likes = likes;
+                }
             })
 
         builder

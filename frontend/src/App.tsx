@@ -4,7 +4,7 @@ import {
   HomePage, SignInPage, SignUpPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, EditProfilePage, AddPostPage,
   UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage, ChatPage, ConversationsPage, NotificationsPage
 } from "./pages/Index"
-import { Layout, AuthProfileGuard, MessageToast } from "./components/index"
+import { Layout, AuthProfileGuard, MessageToast, SocketListener } from "./components/index"
 import { useAppDispatch, useAppSelector } from "./store/hooks"
 import { loadUserFromToken } from "./store/profileSlice/profileThunk"
 import socket from "./socket/socket";
@@ -13,6 +13,7 @@ import type { ILastMessage } from "./store/storeTypes"
 import { addNotification } from "./store/notificationsSlice/notificationsSlice"
 import notificationsSound from './assets/sounds/notification.mp3'
 import { markAllAsRead } from "./store/notificationsSlice/notificationsThunk"
+import { useJoinConversations } from "./socket/useJoinConversations"
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +27,7 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
+    
     socket.auth = { token };
     socket.connect();
 
@@ -83,40 +84,44 @@ const App = () => {
     };
   }, [dispatch]);
 
+  useJoinConversations();
 
   return (
     <section className="min-h-screen bg-main text-maintext pb-20 select-none">
       {toastMessage && <MessageToast message={toastMessage} />}
-      <Routes>
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/profile-setup" element={
-          <AuthProfileGuard requireProfileCompleted={false}>
-            <ProfileSetupPage />
-          </AuthProfileGuard>
-        } />
-        <Route path="/" element={
-          <AuthProfileGuard>
-            <Layout />
-          </AuthProfileGuard>
-        }>
-          <Route index element={<HomePage />} />
-          <Route path="/my-profile" element={<ProfilePage />} />
-          <Route path="/edit-profile" element={<EditProfilePage />} />
-          <Route path="/user/:userId" element={<UserProfilePage />} />
-          <Route path="/user/:id/followers" element={<FollowersPage type="followers" />} />
-          <Route path="/user/:id/following" element={<FollowersPage type="following" />} />
-          <Route path="/add-post" element={<AddPostPage />} />
-          <Route path="/saved-posts" element={<SavedPostsPage />} />
-          <Route path="/user/:userId/posts/:postId" element={<UserPostsPage />} />
-          <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />
-          <Route path="/messages" element={<ConversationsPage />} />
-          <Route path="/messages/:conversationId" element={<ChatPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-        </Route>
-      </Routes>
+      <>
+        <SocketListener />
+        <Routes>
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/profile-setup" element={
+            <AuthProfileGuard requireProfileCompleted={false}>
+              <ProfileSetupPage />
+            </AuthProfileGuard>
+          } />
+          <Route path="/" element={
+            <AuthProfileGuard>
+              <Layout />
+            </AuthProfileGuard>
+          }>
+            <Route index element={<HomePage />} />
+            <Route path="/my-profile" element={<ProfilePage />} />
+            <Route path="/edit-profile" element={<EditProfilePage />} />
+            <Route path="/user/:userId" element={<UserProfilePage />} />
+            <Route path="/user/:id/followers" element={<FollowersPage type="followers" />} />
+            <Route path="/user/:id/following" element={<FollowersPage type="following" />} />
+            <Route path="/add-post" element={<AddPostPage />} />
+            <Route path="/saved-posts" element={<SavedPostsPage />} />
+            <Route path="/user/:userId/posts/:postId" element={<UserPostsPage />} />
+            <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />
+            <Route path="/messages" element={<ConversationsPage />} />
+            <Route path="/messages/:conversationId" element={<ChatPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+          </Route>
+        </Routes>
+      </>
     </section>
   )
 }

@@ -49,24 +49,8 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (!conversationId) return;
-
-        const handleNewMessage = (msg: any) => {
-            if (msg.conversationId === conversationId) {
-                dispatch({ type: "messages/addMessage", payload: msg });
-            }
-        };
-
-        socket.on("newMessage", handleNewMessage);
-
-        return () => {
-            socket.off("newMessage", handleNewMessage);
-        };
-    }, [conversationId]);
-
-    useEffect(() => {
-        if (!conversationId) return;
         socket.emit("joinConversation", conversationId);
-        dispatch({ type: "conversations/markConversationSeen", payload: { conversationId, userId: currentUser?._id } });
+        socket.emit("markSeen", conversationId);
     }, [conversationId]);
 
     useEffect(() => {
