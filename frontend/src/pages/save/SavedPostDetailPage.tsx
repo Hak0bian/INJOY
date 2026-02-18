@@ -61,6 +61,7 @@ const SavedPostDetailPage = () => {
                             text={post.text}
                             likes={post.likes?.map(String) || []}
                             comments={post.commentsCount || 0}
+                            createdAt={post.createdAt}
                         />
                     </div>
                 ))}

@@ -1,9 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
 import type { IAuthState } from "../storeTypes";
 import { loginUser, registerUser } from "./authThunk";
 import { updateProfile, loadUserFromToken } from "../profileSlice/profileThunk";
 import { followUser } from "../usersSlice/usersThunk";
-
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: IAuthState = {
     user: null,
@@ -88,7 +87,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.token = null;
                 state.loading = false;
-                state.initialized = false;
+                state.initialized = true;
             })
 
         builder

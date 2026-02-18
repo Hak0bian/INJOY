@@ -18,7 +18,6 @@ instance.interceptors.request.use((config) => {
     return config;
 });
 
-
 export const API = {
     // Auth
     register(payload: IRegisterPayload) {
@@ -141,5 +140,5 @@ export const API = {
 
     markNotificationsRead() {
         return instance.patch("/notifications/read").then(res => res.data)
-    },
+    }
 };

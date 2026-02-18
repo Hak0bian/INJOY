@@ -38,7 +38,7 @@ const FollowersPage: React.FC<{ type: "followers" | "following" }> = ({ type }) 
   
   return (
     <div className="py-12">
-      <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
+      <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
         <button onClick={() => navigate(-1)} className="cursor-pointer">
           <FaArrowLeft />
         </button>
@@ -61,7 +61,7 @@ const FollowersPage: React.FC<{ type: "followers" | "following" }> = ({ type }) 
           {users.map((f) => {
             const isFollowing = currentUser?.following?.includes(f._id);
             return (
-              <div key={f._id} className="flex justify-between items-center px-5 py-2">
+              <div key={f._id} className="flex justify-between items-center px-3 py-2">
                 <NavLink to={`/user/${f._id}`} className='w-full'>
                   <div className="flex items-center gap-2 text-[14px] ">
                     <img

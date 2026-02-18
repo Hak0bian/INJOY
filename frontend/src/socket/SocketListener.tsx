@@ -13,14 +13,11 @@ const SocketListener = () => {
         if (!user?._id) return;
 
         const handleNewMessage = (msg: any) => {
-
-            // always update conversation lastMessage
             dispatch(updateLastMessage({
                 conversationId: msg.conversationId,
                 message: msg
             }));
 
-            // if current open chat → add message directly
             if (msg.conversationId === activeConversationId) {
 
                 dispatch(addMessage(msg));
@@ -30,7 +27,6 @@ const SocketListener = () => {
                 return;
             }
 
-            // otherwise show toast
             if (msg.sender !== user._id) {
                 dispatch(showToast(msg));
             }

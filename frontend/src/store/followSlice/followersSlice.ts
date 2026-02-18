@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getFollowCounts, getFollowers, getFollowing } from "./followersThunk";
 import type { FollowersState } from "../storeTypes";
 
-
 const initialState: FollowersState = {
     followers: [],
     following: [],

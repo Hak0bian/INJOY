@@ -35,7 +35,6 @@ const SignUp = () => {
             });
     };
 
-
     return (
         <div className="px-5 pt-20">
             <Formik

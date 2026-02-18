@@ -33,7 +33,7 @@ const NotificationsPage = () => {
             )}
 
             {!loading && items.length === 0 && (
-                <div className="flex flex-col items-center justify-center mt-20 text-gray-400">
+                <div className="flex flex-col items-center justify-center mt-10 text-gray-400">
                     <p className="text-lg font-semibold mb-2">No notifications yet</p>
                     <p className="text-sm text-center">
                         When someone likes or comments on your posts,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaRegHeart, FaRegComment } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { GoBookmarkFill, GoBookmark } from "react-icons/go";
@@ -11,9 +11,10 @@ import CommentsPanel from "./CommentsPanel";
 import { toggleSavedPost } from "../../store/SavedSlice/SavedSlice";
 import profileImg from "../../assets/images/profile.jpg"
 import { followUser } from "../../store/usersSlice/usersThunk";
+import { formatDistanceToNow, format, differenceInHours } from "date-fns";
 
 
-const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) => {
+const Post = ({ id, user, image, text, likes, comments, userId, createdAt }: IPostProps) => {
     const dispatch = useAppDispatch();
     const authUser = useAppSelector((state) => state.auth.user);
     const authUserId = authUser?._id || authUser?.id;
@@ -27,12 +28,29 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
     const saved = savedItems.some(item => item.postId === id && item.userId === userId);
     const { user: currentUser } = useAppSelector(state => state.auth);
     const isFollowing = currentUser?.following?.includes(userId);
+    const optionsRef = useRef<HTMLDivElement | null>(null);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                openOptions &&
+                optionsRef.current &&
+                !optionsRef.current.contains(event.target as Node)
+            ) {
+                setOpenOptions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [openOptions]);
 
     const handleSavePost = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!id || !userId) return;
-
         dispatch(toggleSavedPost({ postId: id, userId }));
     };
 
@@ -73,9 +91,22 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                                 alt={user?.fullname}
                                 className="w-8 h-8 rounded-full object-cover"
                             />
-                            <p className="font-semibold text-white">
-                                {user?.profile?.username || user?.fullname}
-                            </p>
+                            <div>
+                                <p className="font-semibold text-white">
+                                    {user?.profile?.username || user?.fullname}
+                                </p>
+                                <p className="text-[11px] text-graytext mb-1">
+                                    {(() => {
+                                        const msgDate = new Date(createdAt);
+                                        const hoursDiff = differenceInHours(new Date(), msgDate);
+                                        if (hoursDiff < 24) {
+                                            return format(msgDate, "HH:mm");
+                                        } else {
+                                            return `${formatDistanceToNow(msgDate)} ago`;
+                                        }
+                                    })()}
+                                </p>
+                            </div>
                         </div>
                     </NavLink>
                     {userId !== currentUser?._id && (
@@ -134,7 +165,10 @@ const Post = ({ id, user, image, text, likes, comments, userId }: IPostProps) =>
                 </div>
 
                 {openOptions && (
-                    <div className="absolute top-0 right-0 flex flex-col items-baseline gap-2 bg-secondary py-5 pl-3 pr-6 text-[14px]">
+                    <div
+                        ref={optionsRef}
+                        className="absolute top-0 right-0 flex flex-col items-baseline gap-2 bg-secondary py-5 pl-3 pr-6 text-[14px]"
+                    >
                         <button
                             onClick={() => {
                                 setIsEditing(true);

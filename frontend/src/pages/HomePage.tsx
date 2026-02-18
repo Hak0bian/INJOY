@@ -1,12 +1,12 @@
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { getFeedPosts } from "../store/postSlice/postThunk";
 import Post from "../components/post/Post";
 import Friends from "../components/Friends";
 import { getFollowing } from "../store/followSlice/followersThunk";
-import { loadUserFromToken } from "../store/profileSlice/profileThunk";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import { useEffect, useRef } from "react";
+
 
 const HomePage = () => {
     const dispatch = useAppDispatch();
@@ -14,26 +14,23 @@ const HomePage = () => {
     const { user } = useAppSelector(state => state.auth);
     const { unreadCount } = useAppSelector(state => state.notifications);
     const { feedPosts, feedLoading, noMoreFeedPosts } = useAppSelector(state => state.posts);
-    const requestId = user?.id || user?._id;
-    let skip = 0;
-    const limit = 10;
-    
 
-    useEffect(() => {
-        dispatch(loadUserFromToken());
-    }, [dispatch]);
+    const skipRef = useRef(0);
+    const limit = 10;
 
     useEffect(() => {
         dispatch(getFeedPosts({ skip: 0, limit }));
+
+        const requestId = user?.id || user?._id;
         if (requestId) {
             dispatch(getFollowing(requestId));
         }
-    }, [dispatch]);
+    }, [dispatch, user?.id, user?._id]);
 
     const loadMore = () => {
-        if (noMoreFeedPosts) return;
-        skip += limit;
-        dispatch(getFeedPosts({ skip, limit }));
+        if (noMoreFeedPosts || feedLoading) return;
+        skipRef.current += limit;
+        dispatch(getFeedPosts({ skip: skipRef.current, limit }));
     };
 
     return (
@@ -57,7 +54,7 @@ const HomePage = () => {
 
                 {feedPosts.map((post, index) => (
                     post.user && (
-                        <div key={`${post._id}-${index}`} className="px-5">
+                        <div key={`${post._id}-${index}`} className="px-3">
                             <Post
                                 id={post._id}
                                 user={post.user}
@@ -66,6 +63,7 @@ const HomePage = () => {
                                 text={post.text}
                                 likes={post.likes.map(String)}
                                 comments={post.commentsCount}
+                                createdAt={post.createdAt}
                             />
                         </div>
                     )
@@ -73,7 +71,7 @@ const HomePage = () => {
             </div>
 
             {feedLoading && <p className="text-center py-2 text-[14px] text-graytext">Loading...</p>}
-            {!feedLoading && !noMoreFeedPosts && (
+            {!feedLoading && !noMoreFeedPosts && feedPosts.length >= limit && (
                 <button
                     onClick={loadMore}
                     className="w-full py-2 text-center text-[14px] cursor-pointer text-graytext"
@@ -82,7 +80,7 @@ const HomePage = () => {
                 </button>
             )}
 
-            {!feedLoading && noMoreFeedPosts && (
+            {!feedLoading && noMoreFeedPosts && feedPosts.length > 0 && (
                 <p className="text-center py-2 text-[14px] text-graytext">No more posts</p>
             )}
         </section>

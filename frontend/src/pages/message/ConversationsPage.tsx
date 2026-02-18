@@ -34,25 +34,34 @@ const ConversationsPage = () => {
 
             {loading && <p className="text-center mt-4 text-gray-500">Loading...</p>}
 
-            {conversations
-                .filter(c => c.lastMessage)
-                .map((c) => {
-                    const otherUser = c.participants.find((p) => p._id !== currentUser?._id);
-                    if (!otherUser) return null;
+            {!loading && conversations.length === 0 && (
+                <div className="flex flex-col items-center justify-center mt-10 text-gray-400">
+                    <p className="text-lg font-semibold mb-2">No conversations yet</p>
+                    <p className="text-sm text-center">Start a chat with someone to get connected!</p>
+                </div>
+            )}
 
-                    return (
-                        <ConversationItem
-                            key={c._id}
-                            id={otherUser?._id}
-                            username={otherUser?.profile?.username || otherUser?.fullname!}
-                            photo={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : undefined}
-                            lastMessage={c?.lastMessage}
-                            createdAt={c?.lastMessage?.createdAt}
-                            onClick={() => navigate(`/messages/${c._id}`)}
-                            onDelete={() => dispatch(deleteConversationById(c._id))}
-                        />
-                    );
-                })}
+            {!loading && conversations.some(c => c.lastMessage) && (
+                conversations
+                    .filter(c => c.lastMessage)
+                    .map((c) => {
+                        const otherUser = c.participants.find((p) => p._id !== currentUser?._id);
+                        if (!otherUser) return null;
+
+                        return (
+                            <ConversationItem
+                                key={c._id}
+                                id={otherUser._id}
+                                username={otherUser?.profile?.username || otherUser?.fullname!}
+                                photo={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : undefined}
+                                lastMessage={c.lastMessage}
+                                createdAt={c?.lastMessage?.createdAt}
+                                onClick={() => navigate(`/messages/${c._id}`)}
+                                onDelete={() => dispatch(deleteConversationById(c._id))}
+                            />
+                        );
+                    })
+            )}
         </div>
     );
 };

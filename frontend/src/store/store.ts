@@ -20,9 +20,8 @@ export const store = configureStore({
         saved: savedReducer, 
         messages: messageReducer,
         conversations: conversationReducer,
-        notifications: notificationsReducer,
-        
-    },
+        notifications: notificationsReducer
+    }
 });
 
 export type RootState = ReturnType<typeof store.getState>

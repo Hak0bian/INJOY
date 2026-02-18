@@ -38,7 +38,7 @@ const MyProfile = () => {
 
 
     return (
-        <div className='pt-5 pb-30 px-5'>
+        <div className='pt-5 pb-30 px-3'>
             <div className='text-right'>
                 <button onClick={() => setOpenSettings(true)} className='cursor-pointer'>
                     <IoSettingsOutline className='w-5 h-5' />
@@ -46,7 +46,7 @@ const MyProfile = () => {
             </div>
 
             <div className='flex flex-col gap-2 pt-6'>
-                <p className='text-center text-[14px]'>@{user?.profile?.username}</p>
+                {user?.profile?.username && <p className='text-center text-sm'>@{user.profile.username}</p>}
                 <img
                     src={user?.profile?.photo ? `http://localhost:5000/${user?.profile?.photo.replace("\\", "/")}` : profile}
                     alt="profile image"

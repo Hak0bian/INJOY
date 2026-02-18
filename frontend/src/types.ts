@@ -61,6 +61,7 @@ export interface IPostProps {
     likes: string[];
     comments: number;
     userId: string;
+    createdAt: string
     user: {
         fullname: string;
         profile?: {

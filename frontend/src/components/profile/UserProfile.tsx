@@ -42,9 +42,9 @@ const UserProfile = () => {
 
 
     return (
-        <div className="pt-10 pb-30 px-5">
+        <div className="pt-10 pb-30 px-3">
             <div className="flex flex-col gap-2">
-                <p className="mb-2">@{otherUser?.profile?.username}</p>
+                {otherUser?.profile?.username && <p className="mb-2 text-sm">@{otherUser.profile.username}</p>}
                 <div className="flex">
                     <img
                         src={otherUser?.profile?.photo ? `http://localhost:5000/${otherUser.profile.photo.replace("\\", "/")}` : profile}

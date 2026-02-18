@@ -2,7 +2,6 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { deleteMessage, getMessages } from "./messageThunks";
 import type { MessageState, IMessage } from "../storeTypes";
 
-
 const initialState: MessageState = {
     messages: [],
     loading: false,

@@ -15,10 +15,12 @@ import profile from '../../assets/images/profile.jpg';
 const ChatPage = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    
     const { conversationId } = useParams<{ conversationId: string }>();
     const { messages, loading } = useAppSelector(state => state.messages);
     const { user: currentUser } = useAppSelector(state => state.auth);
     const [text, setText] = useState("");
+
     const containerRef = useRef<HTMLDivElement>(null);
     const parentRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +28,7 @@ const ChatPage = () => {
     const otherUser = currentConversation?.participants.find(p => p._id !== currentUser?._id);
 
     const { onlineUsers } = useAppSelector(state => state.users);
-    const isOnline = onlineUsers.includes(otherUser?._id!);
+    const isOnline = otherUser?._id && onlineUsers.includes(otherUser._id)
     const lastMyMessage = [...messages].reverse().find(msg => msg.sender === currentUser?._id);
 
     const scrollToBottom = () => {

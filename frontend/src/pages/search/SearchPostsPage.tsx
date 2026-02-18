@@ -37,21 +37,21 @@ const SearchPostsPage = () => {
 
     return (
         <div className="min-h-screen py-5">
-            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
+            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
                 </button>
                 <h2 className="text-[18px]">Recommended Posts</h2>
             </div>
 
-            <div className="pt-16">
+            <div className="pt-5">
                 {recommendedPosts
                     .filter(p => p.user)
                     .map(post => (
                         <div
                             key={post._id}
                             ref={(el) => { postRefs.current[post._id] = el }}
-                            className="px-5 mb-10"
+                            className="px-3 mb-10"
                         >
                             <Post
                                 id={post._id}
@@ -61,6 +61,7 @@ const SearchPostsPage = () => {
                                 text={post.text}
                                 likes={post.likes?.map(String) || []}
                                 comments={post.commentsCount || 0}
+                                createdAt={post.createdAt}
                             />
                         </div>
                     ))

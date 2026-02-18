@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import profile from "../../assets/images/profile.jpg";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
 import { updateProfile } from "../../store/profileSlice/profileThunk";
-
+import setupValidation from "../../validations/setupValidation";
 
 const ProfileSetup = () => {
     const dispatch = useAppDispatch();
@@ -67,16 +67,20 @@ const ProfileSetup = () => {
                     username: "",
                     bio: ""
                 }}
+                validationSchema={setupValidation}
                 onSubmit={handleSubmit}
             >
                 {() => (
                     <Form className="flex flex-col gap-4 w-full max-w-sm">
-                        <Field
-                            name="username"
-                            type="text"
-                            placeholder="Username"
-                            className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
-                        />
+                        <label>
+                            <Field
+                                name="username"
+                                type="text"
+                                placeholder="Username"
+                                className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
+                            />
+                            <ErrorMessage name="username" component="div" className="text-xs text-red-500 tracking-wider mt-1" />
+                        </label>
                         <Field
                             as="textarea"
                             name="bio"

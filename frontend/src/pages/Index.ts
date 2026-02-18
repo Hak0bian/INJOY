@@ -17,6 +17,6 @@ import ConversationsPage from "./message/ConversationsPage";
 import NotificationsPage from "./NotificationsPage";
 
 export { SignInPage, SignUpPage, ProfileSetupPage, ProfilePage, UserProfilePage, FollowersPage, HomePage,
-    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, SearchPostsPage,
-    ChatPage, ConversationsPage, NotificationsPage
- }
+    EditProfilePage, AddPostPage, UserPostsPage, SavedPostsPage, SavedPostDetailPage, SearchPage, 
+    SearchPostsPage, ChatPage, ConversationsPage, NotificationsPage
+}

@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { updateProfile } from "../../store/profileSlice/profileThunk";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useNavigate } from "react-router-dom";
+import { SlRefresh } from "react-icons/sl";
 import profile from "../../assets/images/profile.jpg";
+import setupValidation from "../../validations/setupValidation";
 
 
 const EditProfile = () => {
@@ -11,6 +13,7 @@ const EditProfile = () => {
     const navigate = useNavigate()
     const { user } = useAppSelector((state) => state.auth);
     const [profilePic, setProfilePic] = useState<File | null>(null);
+    const hasImage = profilePic || user?.profile?.photo;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -37,7 +40,7 @@ const EditProfile = () => {
     return (
         <div className="min-h-screen px-6 pt-10 bg-main flex flex-col items-center">
             <h2 className="text-[24px] font-semibold mb-6 text-mainText text-center">
-                Setup Your Profile
+                Edit Your Profile
             </h2>
 
             <div className="relative w-28 h-28 mb-6">
@@ -54,9 +57,9 @@ const EditProfile = () => {
                 />
                 <label
                     htmlFor="file-input"
-                    className="absolute bottom-0 right-0 bg-btn text-[20px] w-8 h-8 pb-1 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 duration-300"
+                    className="absolute bottom-0 right-0 bg-btn text-[20px] w-8 h-8  rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 duration-300"
                 >
-                    +
+                    {hasImage ? <SlRefresh /> : "+"}
                 </label>
                 <input
                     id="file-input"
@@ -74,30 +77,38 @@ const EditProfile = () => {
                     username: user?.profile.username || "",
                     bio: user?.profile.bio || ""
                 }}
+                validationSchema={setupValidation}
                 onSubmit={handleSubmit}
             >
                 {() => (
-                    <Form className="flex flex-col gap-4 w-full max-w-sm">
-                        <Field
-                            name="fullname"
-                            type="text"
-                            placeholder="Full name"
-                            className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
-                        />
+                    <Form className="flex flex-col gap-2 w-full max-w-sm">
+                        <label>
+                            <span className="text-sm text-graytext">Full name</span>
+                            <Field
+                                name="fullname"
+                                type="text"
+                                className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
+                            />
+                        </label>
 
-                        <Field
-                            name="username"
-                            type="text"
-                            placeholder="Username"
-                            className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
-                        />
+                        <label>
+                            <span className="text-sm text-graytext">Username</span>
+                            <Field
+                                name="username"
+                                type="text"
+                                className="h-13 rounded-lg bg-secondary px-3 w-full outline-0 text-[14px] placeholder:text-[14px]"
+                            />
+                            <ErrorMessage name="username" component="div" className="text-xs text-red-500 tracking-wider mt-1" />
+                        </label>
 
-                        <Field
-                            as="textarea"
-                            name="bio"
-                            placeholder="Bio (optional)"
-                            className="h-40 rounded-lg bg-secondary p-3 w-full outline-0 text-[14px] placeholder:text-[14px] resize-none"
-                        />
+                        <label>
+                            <span className="text-sm text-graytext">Bio (optional)</span>
+                            <Field
+                                as="textarea"
+                                name="bio"
+                                className="h-40 rounded-lg bg-secondary p-3 w-full outline-0 text-[14px] placeholder:text-[14px] resize-none"
+                            />
+                        </label>
 
                         <button
                             type="submit"

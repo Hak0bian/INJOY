@@ -19,6 +19,8 @@ const App = () => {
   const dispatch = useAppDispatch();
   const { currentConversation } = useAppSelector(state => state.conversations)
   const { toastMessage } = useAppSelector(state => state.messages)
+  
+  useJoinConversations();
 
   useEffect(() => {
     dispatch(loadUserFromToken());
@@ -83,8 +85,7 @@ const App = () => {
       socket.disconnect();
     };
   }, [dispatch]);
-
-  useJoinConversations();
+  
 
   return (
     <section className="min-h-screen bg-main text-maintext pb-20 select-none">
@@ -111,8 +112,8 @@ const App = () => {
             <Route path="/user/:id/followers" element={<FollowersPage type="followers" />} />
             <Route path="/user/:id/following" element={<FollowersPage type="following" />} />
             <Route path="/add-post" element={<AddPostPage />} />
-            <Route path="/saved-posts" element={<SavedPostsPage />} />
             <Route path="/user/:userId/posts/:postId" element={<UserPostsPage />} />
+            <Route path="/saved-posts" element={<SavedPostsPage />} />
             <Route path="/saved-posts/:postId" element={<SavedPostDetailPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/search/rec-posts/:postId" element={<SearchPostsPage />} />

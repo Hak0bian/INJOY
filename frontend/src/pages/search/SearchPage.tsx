@@ -15,12 +15,7 @@ const SearchPage = () => {
     const [query, setQuery] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
-
     const { onlineUsers } = useAppSelector((state) => state.users);
-    const isOnline = searchResults?.map(res => {
-        onlineUsers.includes(res?._id)
-    })
-
 
     useEffect(() => {
         if (!query.trim()) {
@@ -58,9 +53,9 @@ const SearchPage = () => {
     };
 
     return (
-        <div className="px-2 pt-5">
+        <div className="px-2 pt-15">
             <div className="relative">
-                <div className="sticky top-0 z-10 bg-main pb-5">
+                <div className="fixed top-0 left-0 right-0 z-40 bg-main py-3 px-2">
                     <div className="relative flex items-center gap-1">
                         <button onClick={() => navigate(-1)} className="cursor-pointer px-1">
                             <FaArrowLeft />
@@ -69,7 +64,7 @@ const SearchPage = () => {
                             value={query}
                             onChange={handleInputChange}
                             placeholder="Search users..."
-                            className="w-full h-10 px-4 rounded-md bg-secondary outline-0"
+                            className="w-full h-9 px-4 rounded-md bg-secondary outline-0"
                         />
                         {query && (
                             <button
@@ -83,12 +78,12 @@ const SearchPage = () => {
                     </div>
 
                     {dropdownOpen && (
-                        <div className="absolute left-0 right-0 z-10 min-h-screen bg-main border-b-2 mt-2">
+                        <div className="absolute left-0 right-0 z-10 min-h-screen bg-main border-b-2 mt-3 px-3">
                             {searchLoading && (
-                                <p className="p-3 text-graytext text-sm">Searching...</p>
+                                <p className="pt-3 text-graytext text-center text-sm">Searching...</p>
                             )}
                             {!searchLoading && hasSearched && searchResults.length === 0 && (
-                                <p className="p-2 text-graytext text-sm">No users found</p>
+                                <p className="text-graytext text-sm text-center pt-3">No users found</p>
                             )}
 
                             {!searchLoading &&
@@ -108,7 +103,7 @@ const SearchPage = () => {
                                                         : profileImg
                                                 }
                                             />
-                                            {isOnline && (
+                                            {onlineUsers.includes(user?._id) && (
                                                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-main" />
                                             )}
                                         </div>
@@ -120,27 +115,36 @@ const SearchPage = () => {
                 </div>
             </div>
 
-            {recLoading && <p className="text-center text-graytext py-5">Loading...</p>}
-            {!recLoading && recommendedPosts.length === 0 && (
-                <p className="text-center text-graytext py-5">No posts to show</p>
-            )}
+            {!query.trim() && (
+                <>
+                    {recLoading && (
+                        <p className="text-center text-graytext pt-3">Loading...</p>
+                    )}
 
-            <div className="grid grid-cols-3 gap-1 mt-2">
-                {recommendedPosts.map(post => (
-                    <div
-                        key={post._id}
-                        className="aspect-4/5 w-full overflow-hidden cursor-pointer"
-                        onClick={() => handlePostClick(post._id)}
-                    >
-                        {post.image && (
-                            <img
-                                src={`http://localhost:5000/${post.image.replace("\\", "/")}`}
-                                className="w-full h-full object-cover"
-                            />
-                        )}
+                    {!recLoading && recommendedPosts.length === 0 && (
+                        <p className="text-center text-graytext pt-3">
+                            No posts to show
+                        </p>
+                    )}
+
+                    <div className="grid grid-cols-3 gap-1">
+                        {recommendedPosts.map(post => (
+                            <div
+                                key={post._id}
+                                className="aspect-4/5 w-full overflow-hidden cursor-pointer"
+                                onClick={() => handlePostClick(post._id)}
+                            >
+                                {post.image && (
+                                    <img
+                                        src={`http://localhost:5000/${post.image.replace("\\", "/")}`}
+                                        className="w-full h-full object-cover"
+                                    />
+                                )}
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
+                </>
+            )}
         </div>
     );
 };

@@ -90,5 +90,4 @@ router.put("/seen/:conversationId", authMiddleware, async (req, res) => {
     }
 });
 
-
 export default router;

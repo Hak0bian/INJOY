@@ -34,7 +34,7 @@ const UserPostsPage = () => {
 
     return (
         <div className="min-h-screen py-10">
-            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
+            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
                 </button>
@@ -45,7 +45,7 @@ const UserPostsPage = () => {
                 <div
                     key={post._id}
                     ref={(el) => { postRefs.current[post._id] = el ?? null }}
-                    className="px-5"
+                    className="px-3"
                 >
                     <Post
                         id={post._id}
@@ -55,6 +55,7 @@ const UserPostsPage = () => {
                         text={post.text}
                         likes={post.likes.map(String)}
                         comments={post.commentsCount}
+                        createdAt={post.createdAt}
                     />
                 </div>
             ))}

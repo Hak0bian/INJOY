@@ -132,5 +132,4 @@ router.get("/:id/follow-counts", authMiddleware, async (req, res) => {
     }
 });
 
-
 export default router;

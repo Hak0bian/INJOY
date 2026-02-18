@@ -6,7 +6,6 @@ import { formatDistanceToNow, format, differenceInHours } from "date-fns";
 
 const ConversationItem = ({ id, username, photo, lastMessage, createdAt, isActive, onClick, onDelete }: IConversationItemProps) => {
     const { onlineUsers } = useAppSelector((state) => state.users);
-    const isOnline = onlineUsers.includes(id);
     const { user: currentUser } = useAppSelector(state => state.auth);
     const isUnread = lastMessage && currentUser ? !lastMessage.seenBy?.includes(currentUser._id) : false;
 
@@ -23,7 +22,7 @@ const ConversationItem = ({ id, username, photo, lastMessage, createdAt, isActiv
                     alt={username}
                     className="w-10 h-10 rounded-full object-cover"
                 />
-                {isOnline && (
+                {onlineUsers.includes(id) && (
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-main" />
                 )}
             </div>
