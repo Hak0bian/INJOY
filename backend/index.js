@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
                 }
             );
 
-            socket.to(conversationId).emit("messagesSeen", {
+            io.to(conversationId).emit("messagesSeen", {
                 conversationId,
                 userId: socket.user.id,
             });

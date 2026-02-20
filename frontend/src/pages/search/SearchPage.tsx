@@ -53,9 +53,9 @@ const SearchPage = () => {
     };
 
     return (
-        <div className="px-2 pt-15">
+        <div className="px-2 pt-3">
             <div className="relative">
-                <div className="fixed top-0 left-0 right-0 z-40 bg-main py-3 px-2">
+                <div className="bg-main pb-3 ">
                     <div className="relative flex items-center gap-1">
                         <button onClick={() => navigate(-1)} className="cursor-pointer px-1">
                             <FaArrowLeft />
@@ -127,7 +127,7 @@ const SearchPage = () => {
                         </p>
                     )}
 
-                    <div className="grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-1 mdx:grid-cols-4 ">
                         {recommendedPosts.map(post => (
                             <div
                                 key={post._id}

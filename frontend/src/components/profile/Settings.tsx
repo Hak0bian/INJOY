@@ -23,7 +23,7 @@ const Settings = ({ open, onClose }: { open: boolean; onClose: () => void }) => 
             {open && (<div onClick={onClose} className="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-10"/>)}
             <div
                 className={
-                    `fixed top-0 right-0 z-15 w-60 h-screen bg-secondary transition-transform duration-300 ease-in-out border-l border-gray-500
+                    `fixed top-0 right-0 z-50 w-60 h-screen bg-secondary transition-transform duration-300 ease-in-out border-l border-gray-500
                     ${open ? "translate-x-0" : "translate-x-full"}
                 `}
             >

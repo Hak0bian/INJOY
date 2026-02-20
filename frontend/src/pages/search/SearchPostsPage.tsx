@@ -36,7 +36,7 @@ const SearchPostsPage = () => {
     if (recommendedPosts.length === 0) return <p className="text-center pt-10">No posts to show.</p>;
 
     return (
-        <div className="min-h-screen py-5">
+        <div className="min-h-screen">
             <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
@@ -44,14 +44,13 @@ const SearchPostsPage = () => {
                 <h2 className="text-[18px]">Recommended Posts</h2>
             </div>
 
-            <div className="pt-5">
+            <div className="grid xs:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-3">
                 {recommendedPosts
                     .filter(p => p.user)
                     .map(post => (
                         <div
                             key={post._id}
                             ref={(el) => { postRefs.current[post._id] = el }}
-                            className="px-3 mb-10"
                         >
                             <Post
                                 id={post._id}

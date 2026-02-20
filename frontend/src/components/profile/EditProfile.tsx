@@ -81,7 +81,7 @@ const EditProfile = () => {
                 onSubmit={handleSubmit}
             >
                 {() => (
-                    <Form className="flex flex-col gap-2 w-full max-w-sm">
+                    <Form className="flex flex-col gap-2 w-full max-w-md">
                         <label>
                             <span className="text-sm text-graytext">Full name</span>
                             <Field

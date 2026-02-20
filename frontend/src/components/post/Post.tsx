@@ -77,7 +77,7 @@ const Post = ({ id, user, image, text, likes, comments, userId, createdAt }: IPo
 
 
     return (
-        <div className="mt-5 mb-10">
+        <div className="mt-5 mb-5">
             <div className="flex items-center justify-between mb-2">
                 <div className="w-full flex items-center justify-between">
                     <NavLink to={`/user/${userId}`}>

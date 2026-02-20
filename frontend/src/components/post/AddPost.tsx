@@ -46,10 +46,10 @@ const AddPost = () => {
 
 
     return (
-        <div className="px-5 pt-10 text-center">
+        <div className="px-5 pt-10 text-center max-w-md mx-auto">
             <div className="flex items-center justify-between">
                 <h2 className="text-[20px] font-semibold">New Post</h2>
-                <button onClick={() => navigate(-1)}>
+                <button onClick={() => navigate(-1)} className="sm:hidden">
                     <GrClose />
                 </button>
             </div>

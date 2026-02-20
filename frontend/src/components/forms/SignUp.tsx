@@ -36,7 +36,7 @@ const SignUp = () => {
     };
 
     return (
-        <div className="px-5 pt-20">
+        <div className="px-5 pt-20 xs:px-15">
             <Formik
                 initialValues={{
                     username: "",
@@ -46,8 +46,8 @@ const SignUp = () => {
                 onSubmit={handleSubmit}
                 validationSchema={registerValidation}
             >
-                <Form className="flex flex-col gap-4">
-                    <h2 className="w-40 text-[28px] font-semibold mb-5">Create Your Account</h2>
+                <Form className="flex flex-col gap-4 max-w-[500px] mx-auto sm:border border-graytext sm:px-5 sm:py-15 rounded-2xl">
+                    <h2 className="w-40 text-[28px] font-semibold mb-5 xs:w-full xs:text-center">Create Your Account</h2>
 
                     <div>
                         <label className="flex items-center h-13 bg-secondary px-3 rounded-lg">

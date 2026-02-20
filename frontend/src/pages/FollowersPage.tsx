@@ -37,7 +37,7 @@ const FollowersPage: React.FC<{ type: "followers" | "following" }> = ({ type }) 
   if (loading) return <p className="text-center pt-10">Loading...</p>;
   
   return (
-    <div className="py-12">
+    <div className="pt-2">
       <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
         <button onClick={() => navigate(-1)} className="cursor-pointer">
           <FaArrowLeft />

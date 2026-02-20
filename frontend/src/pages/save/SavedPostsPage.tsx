@@ -15,20 +15,20 @@ const SavedPostsPage = () => {
         }
     }, [savedItems, dispatch]);
 
-    if (loading) return <p className="text-center pt-10">Loading...</p>;
+    if (loading) return <p className="text-center pt-10 text-graytext">Loading...</p>;
     if (error) return <p className="text-center pt-10 text-red-500">{error}</p>;
     if (posts.length === 0) return <p className="text-center pt-10 text-graytext">No saved posts yet</p>;
 
     return (
         <div>
-            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
+            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
                 </button>
                 <h2 className="text-[18px]">Saved Posts</h2>
             </div>
 
-            <div className="pt-15 px-5 grid grid-cols-3 gap-1">
+            <div className="pt-3 px-3 grid grid-cols-3 gap-1 mdx:grid-cols-4 lg:grid-cols-3">
                 {posts
                     .filter(p => p.post && p.user)
                     .map(({ post }) => (

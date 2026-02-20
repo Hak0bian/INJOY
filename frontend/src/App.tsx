@@ -15,11 +15,12 @@ import notificationsSound from './assets/sounds/notification.mp3'
 import { markAllAsRead } from "./store/notificationsSlice/notificationsThunk"
 import { useJoinConversations } from "./socket/useJoinConversations"
 
+
 const App = () => {
   const dispatch = useAppDispatch();
   const { currentConversation } = useAppSelector(state => state.conversations)
   const { toastMessage } = useAppSelector(state => state.messages)
-  
+
   useJoinConversations();
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const App = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    
+
     socket.auth = { token };
     socket.connect();
 
@@ -85,12 +86,12 @@ const App = () => {
       socket.disconnect();
     };
   }, [dispatch]);
-  
+
 
   return (
-    <section className="min-h-screen bg-main text-maintext pb-20 select-none">
-      {toastMessage && <MessageToast message={toastMessage} />}
+    <section className="min-h-screen bg-main text-maintext pb-2 select-none">
       <>
+        {toastMessage && <MessageToast message={toastMessage} />}
         <SocketListener />
         <Routes>
           <Route path="/sign-in" element={<SignInPage />} />

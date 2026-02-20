@@ -63,7 +63,7 @@ const ChatPage = () => {
         if (!isMine) {
             socket.emit("markSeen", conversationId);
         }
-    }, [conversationId, messages.length, currentUser]);
+    }, [conversationId, messages, currentUser]);
 
     useEffect(() => {
         if (!conversationId) return;
@@ -79,8 +79,8 @@ const ChatPage = () => {
     };
 
     return (
-        <div ref={parentRef} className="flex flex-col h-screen">
-            <div className="fixed top-0 left-0 right-0 z-10 bg-main flex items-center gap-3 px-5 border-b-2 border-secondary h-14">
+        <div ref={parentRef} className="flex flex-col h-screen relative">
+            <div className="fixed top-0 left-0 right-0 sm:left-64 lg:right-64 z-40 bg-main flex items-center gap-3 px-5 border-b-2 border-secondary h-14">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />
                 </button>
@@ -149,7 +149,7 @@ const ChatPage = () => {
                 })}
             </div>
 
-            <div className="fixed bottom-12 left-0 right-0 bg-main pt-2 h-12">
+            <div className="absolute bottom-0 left-0 right-0 bg-main pt-2 h-12">
                 <div className="flex gap-2 border-2 rounded-full mx-2 border-secondary">
                     <input
                         className="w-full h-9 pl-3 outline-none placeholder:text-sm placeholder:font-light placeholder:tracking-wide"

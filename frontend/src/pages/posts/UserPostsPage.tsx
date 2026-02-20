@@ -33,7 +33,7 @@ const UserPostsPage = () => {
     }, [postId, posts]);
 
     return (
-        <div className="min-h-screen py-10">
+        <div className="min-h-screen">
             <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-3 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />

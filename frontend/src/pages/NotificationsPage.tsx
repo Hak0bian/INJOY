@@ -20,7 +20,7 @@ const NotificationsPage = () => {
     }, [dispatch]);
 
     return (
-        <div className="pt-12">
+        <div className="pt-3">
             <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
                 <button onClick={() => navigate(-1)} className="cursor-pointer">
                     <FaArrowLeft />

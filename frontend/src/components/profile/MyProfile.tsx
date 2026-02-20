@@ -39,13 +39,13 @@ const MyProfile = () => {
 
     return (
         <div className='pt-5 pb-30 px-3'>
-            <div className='text-right'>
+            <div className='text-right sm:hidden'>
                 <button onClick={() => setOpenSettings(true)} className='cursor-pointer'>
                     <IoSettingsOutline className='w-5 h-5' />
                 </button>
             </div>
 
-            <div className='flex flex-col gap-2 pt-6'>
+            <div className='flex flex-col gap-2 pt-6 mdx:text-center'>
                 {user?.profile?.username && <p className='text-center text-sm'>@{user.profile.username}</p>}
                 <img
                     src={user?.profile?.photo ? `http://localhost:5000/${user?.profile?.photo.replace("\\", "/")}` : profile}
@@ -80,7 +80,7 @@ const MyProfile = () => {
                 {!getUserPostsLoading && posts.length === 0 ? (
                     <p className="text-center text-graytext border-t border-graytext pt-5">No posts yet</p>
                 ) : (
-                    <div className="grid grid-cols-3 gap-1">
+                    <div className="grid grid-cols-3 gap-1 mdx:grid-cols-4">
                         {posts.map((post) => (
                             <div key={post._id} className="aspect-4/5 w-full overflow-hidden">
                                 {post.image && (

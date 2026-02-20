@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deleteConversationById, getConversations } from "../../store/conversationSlice/conversationThunks";
 import { useNavigate, useParams } from "react-router-dom";
 import ConversationItem from "../../components/message/ConversationItem";
-import { FaArrowLeft } from "react-icons/fa6";
 import { hideToast } from "../../store/messageSlice/messageSlice";
 
 
@@ -23,15 +22,7 @@ const ConversationsPage = () => {
     }, [conversationId]);
 
     return (
-        <div className="overflow-y-auto pt-12">
-
-            <div className="flex items-center gap-4 fixed top-0 z-10 bg-main w-full px-5 py-2 border-b border-secondary">
-                <button onClick={() => navigate(-1)} className="cursor-pointer">
-                    <FaArrowLeft />
-                </button>
-                <h2 className="text-[18px]">Messages</h2>
-            </div>
-
+        <div className="overflow-y-auto sm:bg-secondary min-h-screen h-full w-full lg:w-64 top-0 lg:fixed right-0 z-30">
             {loading && <p className="text-center mt-4 text-gray-500">Loading...</p>}
 
             {!loading && conversations.length === 0 && (
